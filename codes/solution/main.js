@@ -26,6 +26,7 @@ var port = process.env.PORT || "3000";
 const user = require("./routes/user");
 const profile = require("./routes/profile");
 const recipes = require("./routes/recipes");
+const auth = require("./routes/auth");
 
 //#region cookie middleware
 app.use(function (req, res, next) {
@@ -48,7 +49,8 @@ app.get("/", (req, res) => res.send("welcome"));
 
 app.use("", user);
 app.use("/profile", profile);
-app.use("/recipes", recipes);
+app.use("", recipes);
+app.use("", auth)
 
 app.use(function (err, req, res, next) {
   console.error(err);
@@ -65,3 +67,5 @@ process.on("SIGINT", function () {
   }
   process.exit();
 });
+
+
