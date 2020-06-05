@@ -5,14 +5,14 @@ const axios = require("axios");
 
 const api_domain = "https://api.spoonacular.com/recipes";
 
-router.post("/AddRecipe", async (req, res, next) => {
+/*router.post("/AddRecipe", async (req, res, next) => {
   try {
 
     // parameters exists
     // valid parameters
     // username exists
     let recipeInfo = {
-      author: req.body.user_id,
+      author: req.body.username,
       recipe_name: req.body.recipe_name,
       imageURL: req.body.imageURL,
       timePreparation: req.body.timePreparation,
@@ -21,28 +21,55 @@ router.post("/AddRecipe", async (req, res, next) => {
       freeGluten: req.body.freeGluten,
       servings: req.body.servings
     }
-    const user_id = req.session.user_id;
     await DButils.execQuery(
-        `INSERT INTO recipes VALUES (default,'${user_id}' , '${recipeInfo.recipe_name}', '${recipeInfo.imageURL}', '${recipeInfo.timePreparation}', '${recipeInfo.vegan}', '${recipeInfo.vegeterian}', '${recipeInfo.freeGluten}', '${recipeInfo.servings}')`
+        `INSERT INTO recipes VALUES (default,'${recipeInfo.username}' , '${recipeInfo.recipe_name}', '${recipeInfo.imageURL}', '${recipeInfo.timePreparation}', '${recipeInfo.vegan}', '${recipeInfo.vegeterian}', '${recipeInfo.freeGluten}', '${recipeInfo.servings}')`
     );
     res.status(201).send({ message: "recipe created", success: true });
   } catch (error) {
     next(error);
   }
-});
+});*/
 
-router.get("/", (req, res) => res.send("im here"));
+//router.get("/", (req, res) => res.send("im here"));
 
 router.get("/Information", async (req, res, next) => {
   try {
-    const recipe = await getRecipeInfo(req.query.recipe_id);
+    //const recipe = await getRecipeInfo(req.query);
+    const recipe = await getRecipeInfo(req.query);
     res.send({ data: recipe.data });
   } catch (error) {
     next(error);
   }
 });
 
-router.get('/randomRecipes', async (req, res, next) => {
+router.get(`/randomRecipes`, async (req, res, next) => {
+  try {
+    const recipe = await axios.get(`${api_domain}/random`, {
+      params: {
+        number: 3,
+        apiKey: process.env.spooncular_apiKey
+      }
+    });
+    console.log(recipe.data);
+    var recipeArray = recipe.data["recipes"];
+    console.log("coucou");
+    var recipeMeta1 = getRecipeInfo(recipeArray[0]);
+    var recipeMeta2 = getRecipeInfo(recipeArray[1]);
+    var recipeMeta3 = getRecipeInfo(recipeArray[2]);
+    var random_response =
+        {
+          "Random Recipe 1" : recipeMeta1,
+          "Random Recipe 2" : recipeMeta2,
+          "Random Recipe 3" : recipeMeta3,
+        };
+    res.status(770).send(random_response);
+
+  } catch (error) {
+    next(error);
+  }
+});
+
+/*router.get('/3RandomRecipes', async (req, res, next) => {
   const valid_recipes = [];
   const num_recipes_to_ask=3;
   const valid_recipes_returned = await getValidRecipe(num_recipes_to_ask, valid_recipes);
@@ -75,8 +102,16 @@ router.get("/search", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+});*/
 //#endregion
+
+/*function getRecipeInfo(recipes){
+  return {
+    "Id": recipes["recipe_id"],
+    "Picture": recipes["imageURL"],
+    "Name": recipes["recipe_name"]
+  }
+}*/
 
 function getRecipeInfo(id) {
   return axios.get(`${api_domain}/${id}/information`, {
@@ -85,30 +120,6 @@ function getRecipeInfo(id) {
       apiKey: process.env.spooncular_apiKey
     }
   });
-}
-
-async function getValidRecipe(recipes_number, valid_recipes){
-  search_params ={};
-  search_params.number = recipes_number;
-  await axios.get(
-      `${api_domain}/random?apiKey=${process.env.spooncular_apiKey}`,
-      {
-        params: search_params,
-      }
-  ).then(async (search_respone) => {
-    const valid_recipes_returned = checkRecipeValidation(search_respone, valid_recipes);
-    if (valid_recipes.length<3) {
-      console.log("Here")
-      await getValidRecipe(3-valid_recipes.length, valid_recipes);
-      return valid_recipes;
-    } else {
-      return valid_recipes;
-    }
-  });
-}
-
-function extractRelventRandomRecipesData(recipes_info){
-  return recipes_info.map((recipes_info) => searchUtils.extractRelventRecipeData(recipes_info))
 }
 
 module.exports = router;
