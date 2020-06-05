@@ -11,7 +11,7 @@ router.post("/Register", async (req, res, next) => {
     let userInfo = {
       username: req.body.username,
       firstName: req.body.firstName,
-      lastName: req.body.firstName,
+      lastName: req.body.lastName,
       contry: req.body.contry,
       password: req.body.password,
       email: req.body.email,
