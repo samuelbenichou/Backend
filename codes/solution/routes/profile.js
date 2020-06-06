@@ -1,11 +1,12 @@
 var express = require("express");
 var router = express.Router();
 const DButils = require("../../modules/DButils");
+const poolConnect = require("../../modules/DButils");
 
 const {check, validationResult} = require('express-validator')
-const { MyPoolPromise } = require('../../configuration/dbCon')
-const recipes_actions = require('../solution/routes/recipes')
-const auth = require('../../middlewares/auth');
+const recipes_actions = require('../../solution/routes/recipes')
+const auth = require("../../middleWares/auth");
+
 
 router.use(function requireLogin(req, res, next) {
   if (!req.user_id) {

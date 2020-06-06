@@ -8,10 +8,19 @@ const config = {
   database: process.env.tedious_database,
   connectionTimeout: 1500000,
   options: {
-    encrypt: true,
-    enableArithAbort: true
-  }
+    "encrypt": true,
+    "enableArithAbort": true
+  },
 };
+
+// const pool = new sqlCon.ConnectionPool(config).connect().then(pool => {
+//   console.log('MSSQL connection succeeded')
+//   return pool
+//   })
+//     .catch(err => console.log('Failed to connect to database! wrong Configuration: ', err))
+// module.exports = {
+//   sqlCon, poolPromise
+// }
 
 const pool = new sql.ConnectionPool(config);
 const poolConnect = pool
