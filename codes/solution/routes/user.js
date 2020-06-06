@@ -2,74 +2,37 @@ var express = require("express");
 var router = express.Router();
 const DButils = require("../../modules/DButils");
 const bcrypt = require("bcrypt");
+const api_domain = "https://api.spoonacular.com/recipes";
 
-router.post("/Register", async (req, res, next) => {
+router.get("/personalRecipes", async function (req, res) {
   try {
-    // parameters exists
-    // valid parameters
-    // username exists
-    let userInfo = {
-      username: req.body.username,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      contry: req.body.contry,
-      password: req.body.password,
-      email: req.body.email,
-      profilePic: req.body.profilePic
-    }
+    const aaa = req.firstName;
+    const username = req.username;
+    console.log(aaa);
+    const personal_recipes = await DButils.execQuery(`SELECT recipe_id,recipe_name,imageURL,timePreparation,vegan,vegeterian,freeGluten FROM recipes where author='${username}'`);
 
-    const users = await DButils.execQuery("SELECT username FROM users");
+    let toSend=[];
 
-    if (users.find((x) => x.username === userInfo.username))
-      throw { status: 409, message: "Username taken" };
+    personal_recipes.forEach(recipe => {
+      toSend.push({
+        recipe_id:recipe.recipe_id,
+        recipe_name:recipe.recipe_name,
+        imageURL:recipe.imageURL,
+        timePreparation:recipe.timePreparation,
+        vegan:recipe.vegan,
+        vegetarian:recipe.vegetarian,
+        freeGluten:recipe.freeGluten
+      });
+    });
 
-    // add the new username
-    let hash_password = bcrypt.hashSync(
-      req.body.password,
-      parseInt(process.env.bcrypt_saltRounds)
-    );
-    await DButils.execQuery(
-        `INSERT INTO users VALUES (default, '${userInfo.username}', '${userInfo.firstName}', '${userInfo.lastName}', '${userInfo.contry}', '${hash_password}', '${userInfo.email}', '${userInfo.profilePic}')`
-    );
-    res.status(201).send({ message: "user created", success: true });
-  } catch (error) {
+    res.send(toSend);
+  }
+  catch (error) {
     next(error);
   }
+
 });
 
-router.post("/Login", async (req, res, next) => {
-  try {
-    // check that username exists
-    const users = await DButils.execQuery("SELECT username FROM users");
-    if (!users.find((x) => x.username === req.body.username))
-      throw { status: 401, message: "Username or Password incorrect" };
 
-    // check that the password is correct
-    const user = (
-      await DButils.execQuery(
-        `SELECT * FROM users WHERE username = '${req.body.username}'`
-      )
-    )[0];
-
-    if (!bcrypt.compareSync(req.body.password, user.password)) {
-      throw { status: 401, message: "Username or Password incorrect" };
-    }
-
-    // Set cookie
-    req.session.user_id = user.user_id;
-    // req.session.save();
-    // res.cookie(session_options.cookieName, user.user_id, cookies_options);
-
-    // return cookie
-    res.status(200).send({ message: "login succeeded", success: true });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post("/Logout", function (req, res) {
-  req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
-  res.send({ success: true, message: "logout succeeded" });
-});
 
 module.exports = router;
