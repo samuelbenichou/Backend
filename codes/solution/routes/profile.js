@@ -2,6 +2,11 @@ var express = require("express");
 var router = express.Router();
 const DButils = require("../../modules/DButils");
 
+const {check, validationResult} = require('express-validator')
+const { MyPoolPromise } = require('../../configuration/dbCon')
+const recipes_actions = require('../solution/routes/recipes')
+const auth = require('../../middlewares/auth');
+
 router.use(function requireLogin(req, res, next) {
   if (!req.user_id) {
     next({ status: 401, message: "unauthorized" });
@@ -77,5 +82,43 @@ router.post("/addPersonalRecipe", async (req, res, next) => {
   }
 });
 //#endregion
+
+//@route PUT/api/favorite
+//@update new favorite recipe to table
+// router.put('/favorite',auth,[check('id', 'must be not empty').not().isEmpty()],async function(req,res,next){
+//   try{
+//     //check that input is  not null
+//     const error = validationResult(req)
+//     if(!error.isEmpty())
+//       return res.status(400).json({ errors: error.array() });
+//
+//     const {id} = req.body.id;//////////////////////////////////////////////////??? .id
+//     pool = await MyPoolPromise
+//     result = await pool.request()
+//         .query(`select * from recipes where id =  '${id}'`,async function(err, user){
+//           if (err)
+//             return next(err)
+//           //Check if the recipe is from user
+//
+//
+//           if(user.recordset.length !== 0)
+//             recipes_actions.addToRecipeFavorite(id,req.user,'user',next,res)
+//           else
+//           {
+//             //Check if the recipe is from API
+//             try{
+//               //let exists= await recipes_actions.getRecipeInfo(id)
+//               recipes_actions.addToRecipeFavorite(id,req.user,'spooncalur',next,res)
+//             }
+//             catch(err) {
+//               next(err)
+//             }
+//           }
+//         })
+//   }
+//   catch(error){
+//     next(error);
+//   }
+// })
 
 module.exports = router;

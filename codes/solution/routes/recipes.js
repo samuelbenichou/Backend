@@ -4,6 +4,7 @@ const DButils = require("../../modules/DButils");
 const axios = require("axios");
 
 const api_domain = "https://api.spoonacular.com/recipes";
+const createError = require('http-errors')
 
 /*router.post("/AddRecipe", async (req, res, next) => {
   try {
@@ -133,5 +134,49 @@ function getRecipeInfo(id) {
     }
   });
 }
+
+async function addToRecipeFavorite(id,username,type,next,res) {
+  try{
+
+    var myFavoriteRecipe;
+    pool = await poolPromise
+    result = await pool.request()
+        .query(`select * from profile where username =  '${username}'`,async function(err, profile){
+          if (err){
+            next(err)
+          }
+
+          if(profile.recordset.length === 0){
+            next(createError('404','non exists profile !! '))
+          }
+
+          //check if the recipe is alreadi saved in the favorites
+          if(profile.recordset[0].favoriteRecipe.length===0)
+              myFavoriteRecipe=[]
+          else
+              myFavoriteRecipe=JSON.parse(profile.recordset[0].favoriteRecipe)
+
+          NotExistsrecipe = myFavoriteRecipe.some(recId => {
+            return recId.id===id
+          })
+
+          if(!NotExistsrecipe){
+            //Check if the recipe is user or spoon api recipe
+            let newFavorite={'id':id, 'type': type }
+            favoriteRecipe.push(newFavorite)
+            await pool.request()
+                .query(`update profile set favoriteRecipe = '${JSON.stringify(myFavoriteRecipe)}' where username =  '${username}'`,function(err, user){
+                  return res.status(200).json({message: 'new favorite recipe have succesfuly added to table', sucess:'true'})
+                })
+          }
+          else
+            next(createError(400,'error - this recipe is already exists'))
+        })
+  }
+  catch(err){
+    next(err)
+  }
+}
+
 
 module.exports = router;
