@@ -50,12 +50,22 @@ router.get(`/randomRecipes`, async (req, res, next) => {
         apiKey: process.env.spooncular_apiKey
       }
     });
+    console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
     console.log(recipe.data);
+    console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
     var recipeArray = recipe.data["recipes"];
     console.log("coucou");
-    var recipeMeta1 = getRecipeInfo(recipeArray[0]);
-    var recipeMeta2 = getRecipeInfo(recipeArray[1]);
-    var recipeMeta3 = getRecipeInfo(recipeArray[2]);
+    console.log("rec id: " + recipeArray[0].id);
+    console.log("rec id: " + recipeArray[1].id);
+    console.log("rec id: " + recipeArray[2].id);
+    //console.log("rec info:: " + recipeArray[0].params.toString());
+
+    //var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
+    //var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
+
+    var recipeMeta1 = getRecipeInfo(recipeArray[0].id);
+    var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
+    var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
     var random_response =
         {
           "Random Recipe 1" : recipeMeta1,
@@ -114,6 +124,8 @@ router.get("/search", async (req, res, next) => {
 }*/
 
 function getRecipeInfo(id) {
+  console.log("rec id in fanc: " + id);
+
   return axios.get(`${api_domain}/${id}/information`, {
     params: {
       includeNutrition: false,
