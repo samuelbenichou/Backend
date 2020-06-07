@@ -6,7 +6,7 @@ const config = {
   password: process.env.tedious_password,
   server: process.env.tedious_server,
   database: process.env.tedious_database,
-  connectionTimeout: 1500000,
+  //connectionTimeout: 1500000,
   options: {
     "encrypt": true,
     "enableArithAbort": true
@@ -22,11 +22,16 @@ const config = {
 //   sqlCon, poolPromise
 // }
 
-const pool = new sql.ConnectionPool(config);
-const poolConnect = pool
-  .connect()
-  .then(() => console.log("new connection pool Created"))
-  .catch((err) => console.log(err));
+const poolConnect = new sql.ConnectionPool(config)
+    .connect()
+    .then(pool => {
+      console.log('new connection pool Created')
+      return pool
+    })
+    .catch(err => console.log('Database Connection Failed! Bad Config: ', err))
+module.exports = {
+  sql, poolConnect
+}
 
 exports.execQuery = async function (query) {
   await poolConnect;
@@ -38,7 +43,6 @@ exports.execQuery = async function (query) {
     throw err;
   }
 };
-
 // process.on("SIGINT", function () {
 //   if (pool) {
 //     pool.close(() => console.log("connection pool closed"));

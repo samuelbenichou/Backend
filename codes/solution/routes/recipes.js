@@ -2,9 +2,9 @@ var express = require("express");
 var router = express.Router();
 const DButils = require("../../modules/DButils");
 const axios = require("axios");
-
 const api_domain = "https://api.spoonacular.com/recipes";
 const createError = require('http-errors')
+
 
 /*router.post("/AddRecipe", async (req, res, next) => {
   try {
@@ -43,41 +43,46 @@ router.get("/Information", async (req, res, next) => {
   }
 });
 
+// router.get("/test", async (req, res, next) => {
+//     console.log("+++++++++++++++++++++++++")
+//     console.log(req.body.id)
+// });
+
 router.get(`/randomRecipes`, async (req, res, next) => {
-  try {
-    const recipe = await axios.get(`${api_domain}/random`, {
-      params: {
-        number: 3,
-        apiKey: process.env.spooncular_apiKey
-      }
-    });
-    console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
-    console.log(recipe.data);
-    console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
-    var recipeArray = recipe.data["recipes"];
-    console.log("coucou");
-    console.log("rec id: " + recipeArray[0].id);
-    console.log("rec id: " + recipeArray[1].id);
-    console.log("rec id: " + recipeArray[2].id);
-    //console.log("rec info:: " + recipeArray[0].params.toString());
+    try {
+        const recipe = await axios.get(`${api_domain}/random`, {
+            params: {
+                number: 3,
+                apiKey: process.env.spooncular_apiKey
+            }
+        });
+        console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
+        console.log(recipe.data);
+        console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
+        var recipeArray = recipe.data["recipes"];
+        console.log("coucou");
+        console.log("rec id: " + recipeArray[0].id);
+        console.log("rec id: " + recipeArray[1].id);
+        console.log("rec id: " + recipeArray[2].id);
+        //console.log("rec info:: " + recipeArray[0].params.toString());
 
-    //var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
-    //var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
+        //var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
+        //var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
 
-    var recipeMeta1 = getRecipeInfo(recipeArray[0].id);
-    var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
-    var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
-    var random_response =
-        {
-          "Random Recipe 1" : recipeMeta1,
-          "Random Recipe 2" : recipeMeta2,
-          "Random Recipe 3" : recipeMeta3,
-        };
-    res.status(770).send(random_response);
+        var recipeMeta1 = getRecipeInfo(recipeArray[0].id);
+        var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
+        var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
+        var random_response =
+            {
+                "Random Recipe 1" : recipeMeta1,
+                "Random Recipe 2" : recipeMeta2,
+                "Random Recipe 3" : recipeMeta3,
+            };
+        res.status(770).send(random_response);
 
-  } catch (error) {
-    next(error);
-  }
+    } catch (error) {
+        next(error);
+    }
 });
 
 /*router.get('/3RandomRecipes', async (req, res, next) => {

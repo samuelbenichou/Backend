@@ -48,7 +48,7 @@ app.use(function (req, res, next) {
 app.get("/", (req, res) => res.send("welcome"));
 
 app.use("", user);
-app.use("/profile", profile);
+app.use("", profile);
 app.use("", recipes);
 app.use("", auth)
 
