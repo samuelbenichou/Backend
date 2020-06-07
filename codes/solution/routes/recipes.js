@@ -151,7 +151,7 @@ async function addToRecipeFavorite(id,username,type,next,res) {
           }
 
           //check if the recipe is alreadi saved in the favorites
-          if(profile.recordset[0].favoriteRecipe.length===0)
+          if(profile.recordset[0].myFavoriteRecipe.length===0)
               myFavoriteRecipe=[]
           else
               myFavoriteRecipe=JSON.parse(profile.recordset[0].favoriteRecipe)
@@ -163,7 +163,7 @@ async function addToRecipeFavorite(id,username,type,next,res) {
           if(!NotExistsrecipe){
             //Check if the recipe is user or spoon api recipe
             let newFavorite={'id':id, 'type': type }
-            favoriteRecipe.push(newFavorite)
+              myFavoriteRecipe.push(newFavorite)
             await pool.request()
                 .query(`update profile set favoriteRecipe = '${JSON.stringify(myFavoriteRecipe)}' where username =  '${username}'`,function(err, user){
                   return res.status(200).json({message: 'new favorite recipe have succesfuly added to table', sucess:'true'})

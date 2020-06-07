@@ -4,8 +4,8 @@ const DButils = require("../../modules/DButils");
 const poolConnect = require("../../modules/DButils");
 
 const {check, validationResult} = require('express-validator')
-const recipes_actions = require('../../solution/routes/recipes')
-const auth = require("../../middleWares/auth");
+const recipesActions = require('../../solution/routes/recipes')
+const auth = require('../../solution/routes/auth');
 
 
 router.use(function requireLogin(req, res, next) {
@@ -86,40 +86,45 @@ router.post("/addPersonalRecipe", async (req, res, next) => {
 
 //@route PUT/api/favorite
 //@update new favorite recipe to table
-// router.put('/favorite',auth,[check('id', 'must be not empty').not().isEmpty()],async function(req,res,next){
-//   try{
-//     //check that input is  not null
-//     const error = validationResult(req)
-//     if(!error.isEmpty())
-//       return res.status(400).json({ errors: error.array() });
-//
-//     const {id} = req.body.id;//////////////////////////////////////////////////??? .id
-//     pool = await MyPoolPromise
-//     result = await pool.request()
-//         .query(`select * from recipes where id =  '${id}'`,async function(err, user){
-//           if (err)
-//             return next(err)
-//           //Check if the recipe is from user
-//
-//
-//           if(user.recordset.length !== 0)
-//             recipes_actions.addToRecipeFavorite(id,req.user,'user',next,res)
-//           else
-//           {
-//             //Check if the recipe is from API
-//             try{
-//               //let exists= await recipes_actions.getRecipeInfo(id)
-//               recipes_actions.addToRecipeFavorite(id,req.user,'spooncalur',next,res)
-//             }
-//             catch(err) {
-//               next(err)
-//             }
-//           }
-//         })
-//   }
-//   catch(error){
-//     next(error);
-//   }
-// })
+//  router.put('/favorite',auth,[check('id', 'must be not empty').not().isEmpty()],async function(req,res,next){
+router.put('/favorite',async function(req,res,next){
+  console.log("++++++++++++++++++++++++++++++");/////////////////////////////
+  try{
+    //check that input is  not null
+    console.log("-------------------------------");/////////////////////////////
+    console.log(req.body.id);/////////////////////////////
+    const error = validationResult(req)
+    if(!error.isEmpty())
+      return res.status(400).json({ errors: error.array() });
+
+    const {id} = req.body.id;//////////////////////////////////////////////////??? .id
+    pool = await MyPoolPromise
+    result = await pool.request()
+        .query(`select * from recipes where id =  '${id}'`,async function(err, user){
+          if (err)
+            return next(err)
+          //Check if the recipe is from user
+
+
+          if(user.recordset.length !== 0)
+            recipesActions.addToRecipeFavorite(id,req.user,'user',next,res)
+          else
+          {
+            //Check if the recipe is from API
+            try{
+              //let exists= await recipes_actions.getRecipeInfo(id)
+              recipesActions.addToRecipeFavorite(id,req.user,'spooncalur',next,res)
+            }
+            catch(err) {
+              next(err)
+            }
+          }
+        })
+  }
+  catch(error){
+    next(error);
+  }
+})
+
 
 module.exports = router;
