@@ -5,7 +5,7 @@ const poolConnect = require("../../modules/DButils");
 
 const {check, validationResult} = require('express-validator')
 const recipes_actions = require('../../solution/routes/recipes')
-const auth = require("../../middleWares/auth");
+//const auth = require("../../middleWares/auth");
 
 
 router.use(function requireLogin(req, res, next) {

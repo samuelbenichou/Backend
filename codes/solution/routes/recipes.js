@@ -135,7 +135,7 @@ function getRecipeInfo(id) {
   });
 }
 
-async function addToRecipeFavorite(id,username,type,next,res) {
+/*async function addToRecipeFavorite(id,username,type,next,res) {
   try{
 
     var myFavoriteRecipe;
@@ -176,7 +176,7 @@ async function addToRecipeFavorite(id,username,type,next,res) {
   catch(err){
     next(err)
   }
-}
+}*/
 
 
 module.exports = router;
