@@ -46,7 +46,11 @@
     </schema>
     <schema id="14" parent="3" name="dbo">
       <ObjectId>1</ObjectId>
+<<<<<<< HEAD
       <IntrospectionTimestamp>2020-06-06.22:44:35.327</IntrospectionTimestamp>
+=======
+      <IntrospectionTimestamp>2020-06-04.18:05:53.863</IntrospectionTimestamp>
+>>>>>>> remotes/origin/master
       <Current>1</Current>
     </schema>
     <schema id="15" parent="3" name="guest">
@@ -55,6 +59,7 @@
     <schema id="16" parent="3" name="sys">
       <ObjectId>4</ObjectId>
     </schema>
+<<<<<<< HEAD
     <table id="17" parent="14" name="personalRecipes">
       <ObjectId>2005582183</ObjectId>
       <CreatedTimestamp>2020-06-06.22:44:30.380</CreatedTimestamp>
@@ -73,10 +78,28 @@
     <column id="20" parent="17" name="id">
       <Position>1</Position>
       <DefaultConstraintName>DF__personalReci__id__787EE5A0</DefaultConstraintName>
+=======
+    <table id="17" parent="14" name="recipes">
+      <ObjectId>1429580131</ObjectId>
+      <Outdated>1</Outdated>
+      <CreatedTimestamp>2020-06-04.16:58:46.027</CreatedTimestamp>
+      <ModifiedTimestamp>2020-06-04.16:58:46.027</ModifiedTimestamp>
+    </table>
+    <table id="18" parent="14" name="users">
+      <ObjectId>1365579903</ObjectId>
+      <Outdated>1</Outdated>
+      <CreatedTimestamp>2020-06-04.15:55:39.460</CreatedTimestamp>
+      <ModifiedTimestamp>2020-06-04.16:58:46.030</ModifiedTimestamp>
+    </table>
+    <column id="19" parent="17" name="recipe_id">
+      <Position>1</Position>
+      <DefaultConstraintName>DF__recipes__recipe___571DF1D5</DefaultConstraintName>
+>>>>>>> remotes/origin/master
       <DefaultExpression>newid()</DefaultExpression>
       <DataType>uniqueidentifier|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <column id="21" parent="17" name="recipeName">
       <Position>2</Position>
       <DataType>varchar(300 char)|0s</DataType>
@@ -132,10 +155,19 @@
       <NotNull>1</NotNull>
     </column>
     <column id="31" parent="18" name="recipe_name">
+=======
+    <column id="20" parent="17" name="author">
+      <Position>2</Position>
+      <DataType>uniqueidentifier|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="21" parent="17" name="recipe_name">
+>>>>>>> remotes/origin/master
       <Position>3</Position>
       <DataType>varchar(300 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <column id="32" parent="18" name="imageURL">
       <Position>4</Position>
       <DataType>varchar(500 char)|0s</DataType>
@@ -167,6 +199,9 @@
       <NotNull>1</NotNull>
     </column>
     <index id="38" parent="18" name="PK__recipes__59DE6BF4F330A81C">
+=======
+    <index id="22" parent="17" name="PK__recipes__59DE6BF4A223277B">
+>>>>>>> remotes/origin/master
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>author
@@ -174,6 +209,7 @@ recipe_name</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
+<<<<<<< HEAD
     <key id="39" parent="18" name="PK__recipes__59DE6BF4F330A81C">
       <ObjectId>1861581670</ObjectId>
       <NameSurrogate>1</NameSurrogate>
@@ -203,61 +239,132 @@ recipe_name</ColNames>
       <DefaultExpression>newid()</DefaultExpression>
     </default>
     <column id="42" parent="19" name="user_id">
+=======
+    <key id="23" parent="17" name="PK__recipes__59DE6BF4A223277B">
+      <ObjectId>1445580188</ObjectId>
+      <NameSurrogate>1</NameSurrogate>
+      <CreatedTimestamp>2020-06-04.16:58:46.030</CreatedTimestamp>
+      <ModifiedTimestamp>2020-06-04.16:58:46.030</ModifiedTimestamp>
+      <ColNames>author
+recipe_name</ColNames>
+      <UnderlyingIndexName>PK__recipes__59DE6BF4A223277B</UnderlyingIndexName>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="24" parent="17" name="FK__recipes__author__5812160E">
+      <ObjectId>1477580302</ObjectId>
+      <NameSurrogate>1</NameSurrogate>
+      <CreatedTimestamp>2020-06-04.16:58:46.030</CreatedTimestamp>
+      <ModifiedTimestamp>2020-06-04.16:58:46.030</ModifiedTimestamp>
+      <ColNames>author</ColNames>
+      <RefTableId>1365579903</RefTableId>
+      <RefTableName>users</RefTableName>
+      <RefKeyName>PK__users__B9BE370F04FA7629</RefKeyName>
+      <RefColNames>user_id</RefColNames>
+    </foreign-key>
+    <default id="25" parent="17" name="DF__recipes__recipe___571DF1D5">
+      <ObjectId>1461580245</ObjectId>
+      <NameSurrogate>1</NameSurrogate>
+      <ModifiedTimestamp>2020-06-04.16:58:46.030</ModifiedTimestamp>
+      <ColNames>recipe_id</ColNames>
+      <DefaultExpression>newid()</DefaultExpression>
+    </default>
+    <column id="26" parent="18" name="user_id">
+>>>>>>> remotes/origin/master
       <Position>1</Position>
       <DefaultConstraintName>DF__users__user_id__5441852A</DefaultConstraintName>
       <DefaultExpression>newid()</DefaultExpression>
       <DataType>uniqueidentifier|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <column id="43" parent="19" name="username">
+=======
+    <column id="27" parent="18" name="username">
+>>>>>>> remotes/origin/master
       <Position>2</Position>
       <DataType>varchar(30 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <column id="44" parent="19" name="firstName">
+=======
+    <column id="28" parent="18" name="firstName">
+>>>>>>> remotes/origin/master
       <Position>3</Position>
       <DataType>varchar(30 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <column id="45" parent="19" name="lastName">
+=======
+    <column id="29" parent="18" name="lastName">
+>>>>>>> remotes/origin/master
       <Position>4</Position>
       <DataType>varchar(30 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <column id="46" parent="19" name="contry">
+=======
+    <column id="30" parent="18" name="contry">
+>>>>>>> remotes/origin/master
       <Position>5</Position>
       <DataType>varchar(50 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <column id="47" parent="19" name="password">
+=======
+    <column id="31" parent="18" name="password">
+>>>>>>> remotes/origin/master
       <Position>6</Position>
       <DataType>varchar(300 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <column id="48" parent="19" name="email">
+=======
+    <column id="32" parent="18" name="email">
+>>>>>>> remotes/origin/master
       <Position>7</Position>
       <DataType>varchar(30 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <column id="49" parent="19" name="profilePic">
+=======
+    <column id="33" parent="18" name="profilePic">
+>>>>>>> remotes/origin/master
       <Position>8</Position>
       <DataType>varchar(300 char)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
+<<<<<<< HEAD
     <index id="50" parent="19" name="PK__users__B9BE370F04FA7629">
+=======
+    <index id="34" parent="18" name="PK__users__B9BE370F04FA7629">
+>>>>>>> remotes/origin/master
       <Position>1</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>user_id</ColNames>
       <Clustering>1</Clustering>
       <Unique>1</Unique>
     </index>
+<<<<<<< HEAD
     <index id="51" parent="19" name="UQ__users__F3DBC572B09BE473">
+=======
+    <index id="35" parent="18" name="UQ__users__F3DBC572B09BE473">
+>>>>>>> remotes/origin/master
       <Position>2</Position>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>username</ColNames>
       <Unique>1</Unique>
     </index>
+<<<<<<< HEAD
     <key id="52" parent="19" name="PK__users__B9BE370F04FA7629">
+=======
+    <key id="36" parent="18" name="PK__users__B9BE370F04FA7629">
+>>>>>>> remotes/origin/master
       <ObjectId>1381579960</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2020-06-04.15:55:39.460</CreatedTimestamp>
@@ -266,7 +373,11 @@ recipe_name</ColNames>
       <UnderlyingIndexName>PK__users__B9BE370F04FA7629</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <key id="53" parent="19" name="UQ__users__F3DBC572B09BE473">
+=======
+    <key id="37" parent="18" name="UQ__users__F3DBC572B09BE473">
+>>>>>>> remotes/origin/master
       <ObjectId>1397580017</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <CreatedTimestamp>2020-06-04.15:55:39.460</CreatedTimestamp>
@@ -274,7 +385,11 @@ recipe_name</ColNames>
       <ColNames>username</ColNames>
       <UnderlyingIndexName>UQ__users__F3DBC572B09BE473</UnderlyingIndexName>
     </key>
+<<<<<<< HEAD
     <default id="54" parent="19" name="DF__users__user_id__5441852A">
+=======
+    <default id="38" parent="18" name="DF__users__user_id__5441852A">
+>>>>>>> remotes/origin/master
       <ObjectId>1413580074</ObjectId>
       <NameSurrogate>1</NameSurrogate>
       <ModifiedTimestamp>2020-06-04.15:55:39.460</ModifiedTimestamp>

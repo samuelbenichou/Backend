@@ -3,6 +3,8 @@ var router = express.Router();
 const DButils = require("../../modules/DButils");
 const bcrypt = require("bcrypt");
 
+const { MyPoolPromise } = require("../../modules/DButils");
+
 router.post("/Register", async (req, res, next) => {
     try {
         // parameters exists
@@ -71,5 +73,31 @@ router.post("/Logout", function (req, res) {
     req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
     res.send({ success: true, message: "logout succeeded" });
 });
+
+module.exports = async (req,res,next) => {
+    //Check if seassion exists
+    if( !(req.session && req.session.userId) ){
+        return res.status(401).json({msg: 'Session not exists, authorization denied'});
+    }
+
+    var pool = await MyPoolPromise
+    var result = await pool.request()
+        .query(`select * from users where username =  '${req.session.userId}'`,function(err, user){
+            if (err) {
+                return res.status(401).json({msg: err});
+            }
+            if(!user)
+            {
+                return res.status(401).json({msg: 'Session not exists, authorization denied'});
+            }
+
+            user.password= undefined;
+            req.user = req.session.userId;
+            //Access user variable in any html templates
+            res.locals.user = user;
+
+            next();
+        });
+}
 
 module.exports = router;
