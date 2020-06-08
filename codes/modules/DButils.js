@@ -22,16 +22,11 @@ const config = {
 //   sqlCon, poolPromise
 // }
 
-const poolConnect = new sql.ConnectionPool(config)
+const pool = new sql.ConnectionPool(config);
+const poolConnect = pool
     .connect()
-    .then(pool => {
-      console.log('new connection pool Created')
-      return pool
-    })
-    .catch(err => console.log('Database Connection Failed! Bad Config: ', err))
-module.exports = {
-  sql, poolConnect
-}
+    .then(() => console.log("new connection pool Created"))
+    .catch((err) => console.log(err));
 
 exports.execQuery = async function (query) {
   await poolConnect;
@@ -43,6 +38,31 @@ exports.execQuery = async function (query) {
     throw err;
   }
 };
+
+
+// const poolConnect = new sql.ConnectionPool(config)
+//     .connect()
+//     .then(pool => {
+//       console.log('new connection pool Created')
+//       return pool
+//     })
+//     .catch(err => console.log('Database Connection Failed! Bad Config: ', err))
+// module.exports = {
+//   sql, poolConnect
+// }
+//
+// exports.execQuery = async function (query) {
+//   await poolConnect;
+//   try {
+//     var result = await pool.request().query(query);
+//     return result.recordset;
+//   } catch (err) {
+//     console.error("SQL error", err);
+//     throw err;
+//   }
+// };
+
+
 // process.on("SIGINT", function () {
 //   if (pool) {
 //     pool.close(() => console.log("connection pool closed"));

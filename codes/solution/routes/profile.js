@@ -21,10 +21,10 @@ const spooncular = require("../../modules/spoonacular_actions");
 //   }
 // });
 
-// router.get("/test", async (req, res, next) => {
-//   console.log("+++++++++++++++++++++++++")
-//   console.log(req.body.id)
-// });
+router.get("/test", async (req, res, next) => {
+  console.log("+++++++++++++++++++++++++")
+  console.log(req.body.id)
+});
 
 
 //#region global simple
@@ -146,15 +146,17 @@ router.put('/favorite',async function(req,res,next){
 })
 
 
-router.get("/favorites", async function (req, res) {
+router.get("/getMyfavourite", async function (req, res, next) {
   try
   {
-    const username= req.username;
-
+    const username= req.body.username;
+    console.log("input text: "+username)
     const favoriteResSetIDS = await DButils.execQuery(`SELECT recipeId FROM profiles where username='${username}' and isFavorite=1`);
     let favoriteSet=[];
     for (const id of favoriteResSetIDS) {
-      let recipe= await spooncular.recipePreviewData(id.recipeId);
+      let recipe= await spooncular.recipePreviewInfo(id.recipeId);
+      console.log("----------------------id: "+ recipe.id)
+      console.log("----------------------title: "+ recipe.title)
       favoriteSet.push(recipe);
     }
 
