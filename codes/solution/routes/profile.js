@@ -102,43 +102,30 @@ router.post("/addPersonalRecipe", async (req, res, next) => {
 //@route PUT/api/favorite
 //@update new favorite recipe to table
 
-router.put('/favorite',async function(req,res,next){
-  console.log("++++++++++++++++++++++++++++++ enter");/////////////////////////////
+router.put('/addToMyFavorite',async function(req,res,next){
   try{
-    //check that input is  not null
-    console.log("-------------------------------   1");/////////////////////////////
-    // console.log(req.body);/////////////////////////////
-    const error = validationResult(req)
-    if(!error.isEmpty())
-      return res.status(400).json({ errors: error.array() });
+    const username = req.body.username;
+    const recipeId = req.body.recipeId;
+    query = "";
+    const isRecipeExist =  await DButils.execQuery(`SELECT isFavorite FROM profiles where username='${username}' and recipeId='${recipeId}' `);
 
-    const {recipe_id} = req.body.recipe_id;//////////////////////////////////////////////////??? .id
-    pool = await poolConnect
-    console.log("-------------------------------   2");/////////////////////////////
-    result = await pool.request()
-        .query(`select * from recipes where recipe_id =  '${recipe_id}'`,async function(err, user){
-          if (err)
-            return next(err)
-          //Check if the recipe is from user
+    if(isRecipeExist.length == 0){
+      console.log("")
+      console.log("no record - insert new one")
+      query=`insert into profiles (username,recipeId,isFavorite,isWatched) VALUES('${username}','${recipeId}',1,0)`;
+      await DButils.execQuery(query);
+    }
+    else if ( isRecipeExist.length != 0 && isRecipeExist[0].isFavorite!=1){
+      console.log("")
+      console.log("record exist - update as favorite")
+      query=`UPDATE profiles set isFavorite='1' where recipeId='${recipeId}' and username='${username}'`;
+      await DButils.execQuery(query);
+    }
+    else{
+      throw { status: 400, message: "The recipe have already signed as favorite" };
+    }
 
-          console.log("-------------------------------   3");/////////////////////////////
-          if(user.recordset.length !== 0){
-            console.log("-------------------------------   4");/////////////////////////////
-            recipesActions.addToRecipeFavorite(id,req.user,'user',next,res)
-          }
-          else
-          {
-            //Check if the recipe is from API
-            try{
-              //let exists= await recipes_actions.getRecipeInfo(id)
-              console.log("-------------------------------   5");/////////////////////////////
-              recipesActions.addToRecipeFavorite(id,req.user,'spooncalur',next,res)
-            }
-            catch(err) {
-              next(err)
-            }
-          }
-        })
+    res.status(201).send({ message: "new recipe has added to the user favorites"});
   }
   catch(error){
     next(error);

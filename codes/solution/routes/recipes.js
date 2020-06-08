@@ -61,9 +61,9 @@ router.get(`/randomRecipes`, async (req, res, next) => {
         console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
         var recipeArray = recipe.data["recipes"];
         console.log("coucou");
-        console.log("rec id: " + recipeArray[0].id);
-        console.log("rec id: " + recipeArray[1].id);
-        console.log("rec id: " + recipeArray[2].id);
+        console.log("rec id: " + recipeArray[0].id + "  rec title: "+ recipeArray[0].title);
+        console.log("rec id: " + recipeArray[1].id + "  rec title: "+ recipeArray[1].title);
+        console.log("rec id: " + recipeArray[2].id + "  rec title: "+ recipeArray[2].title);
         //console.log("rec info:: " + recipeArray[0].params.toString());
 
         //var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
@@ -130,8 +130,6 @@ router.get("/search", async (req, res, next) => {
 }*/
 
 function getRecipeInfo(id) {
-  console.log("rec id in fanc: " + id);
-
   return axios.get(`${api_domain}/${id}/information`, {
     params: {
       includeNutrition: false,
