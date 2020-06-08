@@ -21,5 +21,21 @@ async function recipePreviewInfo(recipeId) {
     };
 
 }
+async function searchRecipes(recipesNameSearch,cuisine,diet,intolerance,numberOfRecipes)
+{
+    const searchResults = await axios.get(`${api_domain}/search`, {
+        params: {
+            query: recipesNameSearch,
+            cuisine: cuisine,
+            diet: diet,
+            intolerance: intolerance,
+            number: numberOfRecipes,
+            instructionsRequired: true,
+            apiKey: process.env.spooncular_apiKey
+        }
+    });
+    return searchResults;
+}
 
+exports.searchRecipes=searchRecipes;
 exports.recipePreviewInfo=recipePreviewInfo;
