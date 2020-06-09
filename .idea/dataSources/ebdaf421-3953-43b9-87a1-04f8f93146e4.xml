@@ -57,11 +57,13 @@
     </schema>
     <table id="17" parent="14" name="familyRecipes">
       <ObjectId>2101582525</ObjectId>
+      <Outdated>1</Outdated>
       <CreatedTimestamp>2020-06-07.17:35:07.473</CreatedTimestamp>
       <ModifiedTimestamp>2020-06-07.17:35:07.473</ModifiedTimestamp>
     </table>
     <table id="18" parent="14" name="personalRecipes">
       <ObjectId>2005582183</ObjectId>
+      <Outdated>1</Outdated>
       <CreatedTimestamp>2020-06-06.22:44:30.380</CreatedTimestamp>
       <ModifiedTimestamp>2020-06-06.22:44:30.380</ModifiedTimestamp>
     </table>

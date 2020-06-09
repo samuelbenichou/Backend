@@ -181,7 +181,7 @@ function getRecipeInfo(id) {
 //   }
 // }
 
-
+//search recipes in spooncular AIP by name and categories
 // {
 //     "recipesNameSearch": "Cabbage and sausages in beer",
 //     "numberOfRecipes": "0",
@@ -214,7 +214,7 @@ router.get("/searchRecipes", async (req, res, next) => {
         );
         //console.log("---------------------------------------2");
         if(recipesData.length>0)
-            res.send(recipesData);
+            res.status(200).send(recipesData);
         else
         {
             res.status(204).send({message:"No recipes found for the inserted query"});
@@ -224,4 +224,78 @@ router.get("/searchRecipes", async (req, res, next) => {
     }
 });
 
+
+
+
+//get list of recipes idS and return list of recipes frop spooncular API
+// {
+//     "idsArr": [ 716297, 716301, 716423]
+// }
+router.get("/recipies/recipiesIdsApi", async (req, res, next) => {
+    try {
+        const recipeIds  = req.body.idsArr;
+        let recipesArr=new Array();
+        let recipesData ;
+
+        for (const id of recipeIds) {
+            recipesData=  await spooncular.recipePreviewInfo(id )
+            recipesArr.push(recipesData);
+        }
+
+        if(recipesArr.length>0)
+            res.status(200).send(recipesArr);
+        else
+        {
+            res.status(204).send({message:"No recipes found for the inserted query"});
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+});
+
+//return specific recipe from  users local recipes
+// {
+//     "recipeId": "555A4802-1330-4B40-A58F-B6BE6F49AF51"
+// }
+router.get("/recipes/recipeId", async function(req,res,next){
+    try {
+        const recipeId =req.body.recipeId;
+        console.log("recipeId: "+ recipeId)
+        let recipeData  = await DButils.execQuery(`SELECT * FROM recipes where recipe_id='${recipeId}'`);
+        res.status(200).send( recipeData );
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+//get list of recipes idS and return list of recipes from the database
+// {
+//     "idsArr": [ "555A4802-1330-4B40-A58F-B6BE6F49AF51", "657A4802-1330-4B40-A58F-B6BE6F49AF51", "8082A10C-34AE-4869-8CA2-88E21D76962E"]
+// }
+router.get("/recipies/recipiesIdsDatabase", async (req, res, next) => {
+    try {
+        const recipeIds  = req.body.idsArr;
+        let recipesArr=new Array();
+        let recipesData ;
+
+        for (const recipe_id of recipeIds) {
+            recipesData  = await DButils.execQuery(`SELECT * FROM recipes where recipe_id='${recipe_id}'`);
+            recipesArr.push(recipesData);
+
+        }
+
+        if(recipesArr.length>0)
+            res.status(200).send(recipesArr);
+        else
+        {
+            res.status(204).send({message:"No recipes found for the inserted query"});
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+});
 module.exports = router;
