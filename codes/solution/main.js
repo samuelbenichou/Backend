@@ -13,7 +13,7 @@ app.use(
   session({
     cookieName: "session", // the cookie key name
     secret: process.env.COOKIE_SECRET, // the encryption key
-    duration: 20 * 60 * 1000, // expired after 20 sec
+    duration: 50 * 60 * 1000 * 60, // expired after 20 sec
     activeDuration: 0 // if expiresIn < activeDuration,
     //the session will be extended by activeDuration milliseconds
   })
@@ -50,7 +50,8 @@ app.get("/", (req, res) => res.send("welcome"));
 app.use("", user);
 app.use("", profile);
 app.use("", recipes);
-app.use("", auth)
+app.use("", auth);
+
 
 app.use(function (err, req, res, next) {
   console.error(err);
@@ -67,6 +68,3 @@ process.on("SIGINT", function () {
   }
   process.exit();
 });
-
-
-

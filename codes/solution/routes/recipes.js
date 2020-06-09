@@ -43,8 +43,9 @@ router.get("/Information", async (req, res, next) => {
   }
 });
 
-router.get(`/randomRecipes`, async (req, res, next) => {
+/*router.get("/randomRecipes", async (req, res, next) => {
   try {
+    console.log("sam");
     const recipe = await axios.get(`${api_domain}/random`, {
       params: {
         number: 3,
@@ -78,15 +79,9 @@ router.get(`/randomRecipes`, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+});*/
 
-/*router.get('/3RandomRecipes', async (req, res, next) => {
-  const valid_recipes = [];
-  const num_recipes_to_ask=3;
-  const valid_recipes_returned = await getValidRecipe(num_recipes_to_ask, valid_recipes);
-  let info_array = extractRelventRandomRecipesData(valid_recipes_returned);
-  res.status(200).send(info_array);
-})
+
 
 //#region example1 - make serach endpoint
 router.get("/search", async (req, res, next) => {
@@ -113,7 +108,7 @@ router.get("/search", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});*/
+});
 //#endregion
 
 /*function getRecipeInfo(recipes){
@@ -177,6 +172,7 @@ function getRecipeInfo(id) {
     next(err)
   }
 }*/
+
 
 
 module.exports = router;

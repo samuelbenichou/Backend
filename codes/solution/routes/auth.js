@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 const { MyPoolPromise } = require("../../modules/DButils");
 
-router.post("/Register", async (req, res, next) => {
+/*router.post("/Register", async (req, res, next) => {
     try {
         // parameters exists
         // valid parameters
@@ -37,7 +37,7 @@ router.post("/Register", async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-});
+});*/
 
 router.post("/Login", async (req, res, next) => {
     try {
