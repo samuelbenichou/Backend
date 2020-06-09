@@ -1,20 +1,31 @@
 var express = require("express");
 var router = express.Router();
+
 const DButils = require("../../modules/DButils");
-const poolConnect = require("../../modules/DButils");
-
+const { poolConnect } = require("../../modules/DButils");
 const {check, validationResult} = require('express-validator')
-const recipes_actions = require('../../solution/routes/recipes')
-//const auth = require("../../middleWares/auth");
+const recipesActions = require('../../solution/routes/recipes')
+const auth = require('../../solution/routes/auth');
 
+const axios = require("axios");
+const api_domain = "https://api.spoonacular.com/recipes";
+const createError = require('http-errors')
+const spooncular = require("../../modules/spoonacular_actions");
+/////////////////////////////////////////////////////////////////////////////////
 
-router.use(function requireLogin(req, res, next) {
-  if (!req.user_id) {
-    next({ status: 401, message: "unauthorized" });
-  } else {
-    next();
-  }
+// router.use(function requireLogin(req, res, next) {
+//   if (!req.user_id) {
+//     next({ status: 401, message: "unauthorized" });
+//   } else {
+//     next();
+//   }
+// });
+
+router.get("/test", async (req, res, next) => {
+  console.log("+++++++++++++++++++++++++")
+  console.log(req.body.id)
 });
+
 
 //#region global simple
 // router.use((req, res, next) => {
@@ -35,6 +46,7 @@ router.use(function requireLogin(req, res, next) {
 //#endregion
 
 router.get("/favorites", function (req, res) {
+  //console.log("++++++++++++++++++++++++++++++");/////////////////////////////
   res.send(req.originalUrl);
 });
 
@@ -73,6 +85,7 @@ router.get("/personalRecipes", function (req, res) {
 //#endregion
 
 router.post("/addPersonalRecipe", async (req, res, next) => {
+  //console.log("++++++++++++++++++++++++++++++ enter");/////////////////////////////
   try {
     await DButils.execQuery(
       `INSERT INTO recipes VALUES (default, '${req.user_id}', '${req.body.recipe_name}')`
@@ -84,42 +97,63 @@ router.post("/addPersonalRecipe", async (req, res, next) => {
 });
 //#endregion
 
+
+
 //@route PUT/api/favorite
 //@update new favorite recipe to table
-// router.put('/favorite',auth,[check('id', 'must be not empty').not().isEmpty()],async function(req,res,next){
-//   try{
-//     //check that input is  not null
-//     const error = validationResult(req)
-//     if(!error.isEmpty())
-//       return res.status(400).json({ errors: error.array() });
-//
-//     const {id} = req.body.id;//////////////////////////////////////////////////??? .id
-//     pool = await MyPoolPromise
-//     result = await pool.request()
-//         .query(`select * from recipes where id =  '${id}'`,async function(err, user){
-//           if (err)
-//             return next(err)
-//           //Check if the recipe is from user
-//
-//
-//           if(user.recordset.length !== 0)
-//             recipes_actions.addToRecipeFavorite(id,req.user,'user',next,res)
-//           else
-//           {
-//             //Check if the recipe is from API
-//             try{
-//               //let exists= await recipes_actions.getRecipeInfo(id)
-//               recipes_actions.addToRecipeFavorite(id,req.user,'spooncalur',next,res)
-//             }
-//             catch(err) {
-//               next(err)
-//             }
-//           }
-//         })
-//   }
-//   catch(error){
-//     next(error);
-//   }
-// })
+
+router.put('/addToMyFavorite',async function(req,res,next){
+  try{
+    const username = req.body.username;
+    const recipeId = req.body.recipeId;
+    query = "";
+    const isRecipeExist =  await DButils.execQuery(`SELECT isFavorite FROM profiles where username='${username}' and recipeId='${recipeId}' `);
+
+    if(isRecipeExist.length == 0){
+      console.log("")
+      console.log("no record - insert new one")
+      query=`insert into profiles (username,recipeId,isFavorite,isWatched) VALUES('${username}','${recipeId}',1,0)`;
+      await DButils.execQuery(query);
+    }
+    else if ( isRecipeExist.length != 0 && isRecipeExist[0].isFavorite!=1){
+      console.log("")
+      console.log("record exist - update as favorite")
+      query=`UPDATE profiles set isFavorite='1' where recipeId='${recipeId}' and username='${username}'`;
+      await DButils.execQuery(query);
+    }
+    else{
+      throw { status: 400, message: "The recipe have already signed as favorite" };
+    }
+
+    res.status(201).send({ message: "new recipe has added to the user favorites"});
+  }
+  catch(error){
+    next(error);
+  }
+})
+
+
+router.get("/getMyfavourite", async function (req, res, next) {
+  try
+  {
+    const username= req.body.username;
+    console.log("input text: "+username)
+    const favoriteResSetIDS = await DButils.execQuery(`SELECT recipeId FROM profiles where username='${username}' and isFavorite=1`);
+    let favoriteSet=[];
+    for (const id of favoriteResSetIDS) {
+      let recipe= await spooncular.recipePreviewInfo(id.recipeId);
+      console.log("----------------------id: "+ recipe.id)
+      console.log("----------------------title: "+ recipe.title)
+      favoriteSet.push(recipe);
+    }
+
+    res.send(favoriteSet);
+  } catch (error) {
+    next(error);
+  }
+
+});
+
+
 
 module.exports = router;

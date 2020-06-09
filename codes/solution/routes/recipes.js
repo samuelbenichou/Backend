@@ -2,9 +2,9 @@ var express = require("express");
 var router = express.Router();
 const DButils = require("../../modules/DButils");
 const axios = require("axios");
-
 const api_domain = "https://api.spoonacular.com/recipes";
 const createError = require('http-errors')
+const spooncular = require("../../modules/spoonacular_actions");
 
 /*router.post("/AddRecipe", async (req, res, next) => {
   try {
@@ -43,45 +43,55 @@ router.get("/Information", async (req, res, next) => {
   }
 });
 
-/*router.get("/randomRecipes", async (req, res, next) => {
-  try {
-    console.log("sam");
-    const recipe = await axios.get(`${api_domain}/random`, {
-      params: {
-        number: 3,
-        apiKey: process.env.spooncular_apiKey
-      }
-    });
-    console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
-    console.log(recipe.data);
-    console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
-    var recipeArray = recipe.data["recipes"];
-    console.log("coucou");
-    console.log("rec id: " + recipeArray[0].id);
-    console.log("rec id: " + recipeArray[1].id);
-    console.log("rec id: " + recipeArray[2].id);
-    //console.log("rec info:: " + recipeArray[0].params.toString());
+// router.get("/test", async (req, res, next) => {
+//     console.log("+++++++++++++++++++++++++")
+//     console.log(req.body.id)
+// });
 
-    //var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
-    //var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
+router.get(`/randomRecipes`, async (req, res, next) => {
+    try {
+        const recipe = await axios.get(`${api_domain}/random`, {
+            params: {
+                number: 3,
+                apiKey: process.env.spooncular_apiKey
+            }
+        });
+        console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
+        console.log(recipe.data);
+        console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
+        var recipeArray = recipe.data["recipes"];
+        console.log("coucou");
+        console.log("rec id: " + recipeArray[0].id + "  rec title: "+ recipeArray[0].title);
+        console.log("rec id: " + recipeArray[1].id + "  rec title: "+ recipeArray[1].title);
+        console.log("rec id: " + recipeArray[2].id + "  rec title: "+ recipeArray[2].title);
+        //console.log("rec info:: " + recipeArray[0].params.toString());
 
-    var recipeMeta1 = getRecipeInfo(recipeArray[0].id);
-    var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
-    var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
-    var random_response =
-        {
-          "Random Recipe 1" : recipeMeta1,
-          "Random Recipe 2" : recipeMeta2,
-          "Random Recipe 3" : recipeMeta3,
-        };
-    res.status(770).send(random_response);
+        //var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
+        //var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
 
-  } catch (error) {
-    next(error);
-  }
-});*/
+        var recipeMeta1 = getRecipeInfo(recipeArray[0].id);
+        var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
+        var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
+        var random_response =
+            {
+                "Random Recipe 1" : recipeMeta1,
+                "Random Recipe 2" : recipeMeta2,
+                "Random Recipe 3" : recipeMeta3,
+            };
+        res.status(770).send(random_response);
 
+    } catch (error) {
+        next(error);
+    }
+});
 
+/*router.get('/3RandomRecipes', async (req, res, next) => {
+  const valid_recipes = [];
+  const num_recipes_to_ask=3;
+  const valid_recipes_returned = await getValidRecipe(num_recipes_to_ask, valid_recipes);
+  let info_array = extractRelventRandomRecipesData(valid_recipes_returned);
+  res.status(200).send(info_array);
+})
 
 //#region example1 - make serach endpoint
 router.get("/search", async (req, res, next) => {
@@ -108,7 +118,7 @@ router.get("/search", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+});*/
 //#endregion
 
 /*function getRecipeInfo(recipes){
@@ -120,8 +130,6 @@ router.get("/search", async (req, res, next) => {
 }*/
 
 function getRecipeInfo(id) {
-  console.log("rec id in fanc: " + id);
-
   return axios.get(`${api_domain}/${id}/information`, {
     params: {
       includeNutrition: false,
@@ -129,50 +137,165 @@ function getRecipeInfo(id) {
     }
   });
 }
+//
+// async function addToRecipeFavorite(id,username,type,next,res) {
+//   try{
+//
+//     var myFavoriteRecipe;
+//     pool = await poolPromise
+//     result = await pool.request()
+//         .query(`select * from profile where username =  '${username}'`,async function(err, profile){
+//           if (err){
+//             next(err)
+//           }
+//
+//           if(profile.recordset.length === 0){
+//             next(createError('404','non exists profile !! '))
+//           }
+//
+//           //check if the recipe is alreadi saved in the favorites
+//           if(profile.recordset[0].myFavoriteRecipe.length===0)
+//               myFavoriteRecipe=[]
+//           else
+//               myFavoriteRecipe=JSON.parse(profile.recordset[0].favoriteRecipe)
+//
+//           NotExistsrecipe = myFavoriteRecipe.some(recId => {
+//             return recId.id===id
+//           })
+//
+//           if(!NotExistsrecipe){
+//             //Check if the recipe is user or spoon api recipe
+//             let newFavorite={'id':id, 'type': type }
+//               myFavoriteRecipe.push(newFavorite)
+//             await pool.request()
+//                 .query(`update profile set favoriteRecipe = '${JSON.stringify(myFavoriteRecipe)}' where username =  '${username}'`,function(err, user){
+//                   return res.status(200).json({message: 'new favorite recipe have succesfuly added to table', sucess:'true'})
+//                 })
+//           }
+//           else
+//             next(createError(400,'error - this recipe is already exists'))
+//         })
+//   }
+//   catch(err){
+//     next(err)
+//   }
+// }
 
-/*async function addToRecipeFavorite(id,username,type,next,res) {
-  try{
+//search recipes in spooncular AIP by name and categories
+// {
+//     "recipesNameSearch": "Cabbage and sausages in beer",
+//     "numberOfRecipes": "0",
+//     "cuisine": "",
+//     "diet": "",
+//     "intolerance": ""
+// }
+router.get("/searchRecipes", async (req, res, next) => {
+    try {
+        const cuisine = req.body.cuisine ;
+        const diet = req.body.diet ;
+        const intolerance = req.body.intolerance ;
+        const recipesNameSearch = req.body.recipesNameSearch ;
+        let numberOfRecipes = req.body.numberOfRecipes ;
+        // console.log("cuisine: "+ cuisine);
+        // console.log("diet: "+ diet);
+        // console.log("intolerance: "+ intolerance);
+        // console.log("recipesNameSearch: "+ recipesNameSearch);
+        // console.log("numberOfRecipes: "+ numberOfRecipes);
+        //res.status(204).send({message:"No recipes found for the inserted query"});
+        if(numberOfRecipes<=0){
+            numberOfRecipes =5;
+        }
+        const searchResults =await spooncular.searchRecipes(recipesNameSearch,cuisine,diet,intolerance,numberOfRecipes);
+        //console.log("---------------------------------------1");
+        let recipesData = await Promise.all(
+            searchResults.data.results.map((recipe_raw) =>
+                spooncular.recipePreviewInfo(recipe_raw.id)
+            )
+        );
+        //console.log("---------------------------------------2");
+        if(recipesData.length>0)
+            res.status(200).send(recipesData);
+        else
+        {
+            res.status(204).send({message:"No recipes found for the inserted query"});
+        }
+    } catch (error) {
+        next(error);
+    }
+});
 
-    var myFavoriteRecipe;
-    pool = await poolPromise
-    result = await pool.request()
-        .query(`select * from profile where username =  '${username}'`,async function(err, profile){
-          if (err){
-            next(err)
-          }
-
-          if(profile.recordset.length === 0){
-            next(createError('404','non exists profile !! '))
-          }
-
-          //check if the recipe is alreadi saved in the favorites
-          if(profile.recordset[0].favoriteRecipe.length===0)
-              myFavoriteRecipe=[]
-          else
-              myFavoriteRecipe=JSON.parse(profile.recordset[0].favoriteRecipe)
-
-          NotExistsrecipe = myFavoriteRecipe.some(recId => {
-            return recId.id===id
-          })
-
-          if(!NotExistsrecipe){
-            //Check if the recipe is user or spoon api recipe
-            let newFavorite={'id':id, 'type': type }
-            favoriteRecipe.push(newFavorite)
-            await pool.request()
-                .query(`update profile set favoriteRecipe = '${JSON.stringify(myFavoriteRecipe)}' where username =  '${username}'`,function(err, user){
-                  return res.status(200).json({message: 'new favorite recipe have succesfuly added to table', sucess:'true'})
-                })
-          }
-          else
-            next(createError(400,'error - this recipe is already exists'))
-        })
-  }
-  catch(err){
-    next(err)
-  }
-}*/
 
 
 
+//get list of recipes idS and return list of recipes frop spooncular API
+// {
+//     "idsArr": [ 716297, 716301, 716423]
+// }
+router.get("/recipies/recipiesIdsApi", async (req, res, next) => {
+    try {
+        const recipeIds  = req.body.idsArr;
+        let recipesArr=new Array();
+        let recipesData ;
+
+        for (const id of recipeIds) {
+            recipesData=  await spooncular.recipePreviewInfo(id )
+            recipesArr.push(recipesData);
+        }
+
+        if(recipesArr.length>0)
+            res.status(200).send(recipesArr);
+        else
+        {
+            res.status(204).send({message:"No recipes found for the inserted query"});
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+});
+
+//return specific recipe from  users local recipes
+// {
+//     "recipeId": "555A4802-1330-4B40-A58F-B6BE6F49AF51"
+// }
+router.get("/recipes/recipeId", async function(req,res,next){
+    try {
+        const recipeId =req.body.recipeId;
+        console.log("recipeId: "+ recipeId)
+        let recipeData  = await DButils.execQuery(`SELECT * FROM recipes where recipe_id='${recipeId}'`);
+        res.status(200).send( recipeData );
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+//get list of recipes idS and return list of recipes from the database
+// {
+//     "idsArr": [ "555A4802-1330-4B40-A58F-B6BE6F49AF51", "657A4802-1330-4B40-A58F-B6BE6F49AF51", "8082A10C-34AE-4869-8CA2-88E21D76962E"]
+// }
+router.get("/recipies/recipiesIdsDatabase", async (req, res, next) => {
+    try {
+        const recipeIds  = req.body.idsArr;
+        let recipesArr=new Array();
+        let recipesData ;
+
+        for (const recipe_id of recipeIds) {
+            recipesData  = await DButils.execQuery(`SELECT * FROM recipes where recipe_id='${recipe_id}'`);
+            recipesArr.push(recipesData);
+
+        }
+
+        if(recipesArr.length>0)
+            res.status(200).send(recipesArr);
+        else
+        {
+            res.status(204).send({message:"No recipes found for the inserted query"});
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+});
 module.exports = router;

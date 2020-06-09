@@ -6,7 +6,7 @@ const config = {
   password: process.env.tedious_password,
   server: process.env.tedious_server,
   database: process.env.tedious_database,
-  connectionTimeout: 1500000,
+  //connectionTimeout: 1500000,
   options: {
     "encrypt": true,
     "enableArithAbort": true
@@ -24,20 +24,45 @@ const config = {
 
 const pool = new sql.ConnectionPool(config);
 const poolConnect = pool
-  .connect()
-  .then(() => console.log("new connection pool Created"))
-  .catch((err) => console.log(err));
+    .connect()
+    .then(() => console.log("new connection pool Created"))
+    .catch((err) => console.log(err));
 
 exports.execQuery = async function (query) {
   await poolConnect;
   try {
     var result = await pool.request().query(query);
     return result.recordset;
-  } catch (err) {
-    console.error("SQL error", err);
+  }
+  catch (err) {
+    console.error("sql error action", err);
     throw err;
   }
 };
+
+
+// const poolConnect = new sql.ConnectionPool(config)
+//     .connect()
+//     .then(pool => {
+//       console.log('new connection pool Created')
+//       return pool
+//     })
+//     .catch(err => console.log('Database Connection Failed! Bad Config: ', err))
+// module.exports = {
+//   sql, poolConnect
+// }
+//
+// exports.execQuery = async function (query) {
+//   await poolConnect;
+//   try {
+//     var result = await pool.request().query(query);
+//     return result.recordset;
+//   } catch (err) {
+//     console.error("SQL error", err);
+//     throw err;
+//   }
+// };
+
 
 // process.on("SIGINT", function () {
 //   if (pool) {
