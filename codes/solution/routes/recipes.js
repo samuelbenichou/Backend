@@ -182,28 +182,37 @@ function getRecipeInfo(id) {
 // }
 
 
+// {
+//     "recipesNameSearch": "Cabbage and sausages in beer",
+//     "numberOfRecipes": "0",
+//     "cuisine": "",
+//     "diet": "",
+//     "intolerance": ""
+// }
 router.get("/searchRecipes", async (req, res, next) => {
     try {
         const cuisine = req.body.cuisine ;
         const diet = req.body.diet ;
         const intolerance = req.body.intolerance ;
         const recipesNameSearch = req.body.recipesNameSearch ;
-        const numberOfRecipes = req.body.numberOfRecipes ;
-        console.log("cuisine: "+ cuisine);
-        console.log("diet: "+ diet);
-        console.log("intolerance: "+ intolerance);
-        console.log("recipesNameSearch: "+ recipesNameSearch);
-        console.log("numberOfRecipes: "+ numberOfRecipes);
+        let numberOfRecipes = req.body.numberOfRecipes ;
+        // console.log("cuisine: "+ cuisine);
+        // console.log("diet: "+ diet);
+        // console.log("intolerance: "+ intolerance);
+        // console.log("recipesNameSearch: "+ recipesNameSearch);
+        // console.log("numberOfRecipes: "+ numberOfRecipes);
         //res.status(204).send({message:"No recipes found for the inserted query"});
-
+        if(numberOfRecipes<=0){
+            numberOfRecipes =5;
+        }
         const searchResults =await spooncular.searchRecipes(recipesNameSearch,cuisine,diet,intolerance,numberOfRecipes);
-        console.log("---------------------------------------1");
+        //console.log("---------------------------------------1");
         let recipesData = await Promise.all(
             searchResults.data.results.map((recipe_raw) =>
                 spooncular.recipePreviewInfo(recipe_raw.id)
             )
         );
-        console.log("---------------------------------------2");
+        //console.log("---------------------------------------2");
         if(recipesData.length>0)
             res.send(recipesData);
         else
