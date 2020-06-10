@@ -31,8 +31,8 @@ const spooncular = require("../../modules/spoonacular_actions");
   }
 });*/
 
-//router.get("/", (req, res) => res.send("im here"));
 
+//router.get("/", (req, res) => res.send("im here"));
 router.get("/Information", async (req, res, next) => {
   try {
     //const recipe = await getRecipeInfo(req.query);
@@ -91,49 +91,7 @@ function getRecipeInfo(id) {
     }
   });
 }
-//
-// async function addToRecipeFavorite(id,username,type,next,res) {
-//   try{
-//
-//     var myFavoriteRecipe;
-//     pool = await poolPromise
-//     result = await pool.request()
-//         .query(`select * from profile where username =  '${username}'`,async function(err, profile){
-//           if (err){
-//             next(err)
-//           }
-//
-//           if(profile.recordset.length === 0){
-//             next(createError('404','non exists profile !! '))
-//           }
-//
-//           //check if the recipe is alreadi saved in the favorites
-//           if(profile.recordset[0].myFavoriteRecipe.length===0)
-//               myFavoriteRecipe=[]
-//           else
-//               myFavoriteRecipe=JSON.parse(profile.recordset[0].favoriteRecipe)
-//
-//           NotExistsrecipe = myFavoriteRecipe.some(recId => {
-//             return recId.id===id
-//           })
-//
-//           if(!NotExistsrecipe){
-//             //Check if the recipe is user or spoon api recipe
-//             let newFavorite={'id':id, 'type': type }
-//               myFavoriteRecipe.push(newFavorite)
-//             await pool.request()
-//                 .query(`update profile set favoriteRecipe = '${JSON.stringify(myFavoriteRecipe)}' where username =  '${username}'`,function(err, user){
-//                   return res.status(200).json({message: 'new favorite recipe have succesfuly added to table', sucess:'true'})
-//                 })
-//           }
-//           else
-//             next(createError(400,'error - this recipe is already exists'))
-//         })
-//   }
-//   catch(err){
-//     next(err)
-//   }
-// }
+
 
 //search recipes in spooncular AIP by name and categories
 // {
@@ -183,17 +141,40 @@ router.get("/searchRecipes", async (req, res, next) => {
 
 //get list of recipes idS and return list of recipes frop spooncular API
 // {
-//     "idsArr": [ 716297, 716301, 716423]
+//     "idsArr": [ 716297, 716301, 716423],
+//     "username": "liorB"
 // }
 router.get("/recipies/recipiesIdsApi", async (req, res, next) => {
     try {
         const recipeIds  = req.body.idsArr;
+        const username  = req.body.username;
         let recipesArr=new Array();
         let recipesData ;
 
         for (const id of recipeIds) {
             recipesData=  await spooncular.recipePreviewInfo(id )
             recipesArr.push(recipesData);
+        }
+        if (recipesArr.length > 0) {
+            for (const recipe of recipesArr) {
+                let cuerentRecipe = recipe.id;
+                const lastWatchedRecipes = (
+                    await DButils.execQuery(
+                        `SELECT * FROM watched WHERE idRecipe='${cuerentRecipe}' and username='${username}'`
+                    )
+                );
+
+                let currentTime = getCurrentTimeDate();
+                if( lastWatchedRecipes.length!=1 ){
+                    query=`insert into watched (username,idRecipe,lastModify) VALUES('${username}','${cuerentRecipe}' ,'${currentTime}' )`;
+                    await DButils.execQuery(query);
+                }
+                // else{
+                //     query=`UPDATE watched set lastModify=currentTime where idRecipe='${cuerentRecipe}' and username='${username}'`;
+                //     await DButils.execQuery(query);
+                // }
+
+            }
         }
 
         if(recipesArr.length>0)
@@ -232,6 +213,7 @@ router.get("/recipes/recipeId", async function(req,res,next){
 router.get("/recipies/recipiesIdsDatabase", async (req, res, next) => {
     try {
         const recipeIds  = req.body.idsArr;
+        const username  = req.body.username;
         let recipesArr=new Array();
         let recipesData ;
 
@@ -252,4 +234,18 @@ router.get("/recipies/recipiesIdsDatabase", async (req, res, next) => {
         next(error);
     }
 });
+
+function getCurrentTimeDate() {
+    let dateTime = new Date();
+    let month = dateTime.getMonth()+1;
+    let year = dateTime.getFullYear();
+    let date = dateTime.getDate();
+    let hour = dateTime.getHours();
+    let minute = dateTime.getMinutes()
+    let seconds = dateTime.getSeconds()
+    let currentTime = ""+ month+"-"+date+"-"+year+"  "+hour+":"+minute+":"+seconds;
+    //console.log("currentTime: "+currentTime);
+    return currentTime;
+}
+
 module.exports = router;

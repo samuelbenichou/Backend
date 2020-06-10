@@ -110,14 +110,14 @@ router.put('/addToMyFavorite',async function(req,res,next){
     const isRecipeExist =  await DButils.execQuery(`SELECT isFavorite FROM profiles where username='${username}' and recipeId='${recipeId}' `);
 
     if(isRecipeExist.length == 0){
-      console.log("")
-      console.log("no record - insert new one")
+      // console.log("")
+      // console.log("no record - insert new one")
       query=`insert into profiles (username,recipeId,isFavorite,isWatched) VALUES('${username}','${recipeId}',1,0)`;
       await DButils.execQuery(query);
     }
     else if ( isRecipeExist.length != 0 && isRecipeExist[0].isFavorite!=1){
-      console.log("")
-      console.log("record exist - update as favorite")
+      // console.log("")
+      // console.log("record exist - update as favorite")
       query=`UPDATE profiles set isFavorite='1' where recipeId='${recipeId}' and username='${username}'`;
       await DButils.execQuery(query);
     }
@@ -142,8 +142,8 @@ router.get("/getMyfavourite", async function (req, res, next) {
     let favoriteSet=[];
     for (const id of favoriteResSetIDS) {
       let recipe= await spooncular.recipePreviewInfo(id.recipeId);
-      console.log("----------------------id: "+ recipe.id)
-      console.log("----------------------title: "+ recipe.title)
+      // console.log("----------------------id: "+ recipe.id)
+      // console.log("----------------------title: "+ recipe.title)
       favoriteSet.push(recipe);
     }
 
