@@ -21,6 +21,7 @@ app.use(
 app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
 
+
 var port = process.env.PORT || "3000";
 //#endregion
 const user = require("./routes/user");
@@ -30,18 +31,18 @@ const auth = require("./routes/auth");
 
 //#region cookie middleware
 app.use(function (req, res, next) {
-  if (req.session && req.session.user_id) {
-    DButils.execQuery("SELECT user_id FROM users")
-      .then((users) => {
-        if (users.find((x) => x.user_id === req.session.user_id)) {
-          req.user_id = req.session.user_id;
-        }
+    if (req.session && req.session.username) {
+        DButils.execQuery("SELECT username FROM users")
+            .then((users) => {
+                if (users.find((x) => x.username === req.session.username)) {
+                    req.username = req.session.username;
+                }
+                next();
+            })
+            .catch((error) => next());
+    } else {
         next();
-      })
-      .catch((error) => next());
-  } else {
-    next();
-  }
+    }
 });
 //#endregion
 

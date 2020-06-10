@@ -43,12 +43,11 @@ router.get("/Information", async (req, res, next) => {
   }
 });
 
-// router.get("/test", async (req, res, next) => {
-//     console.log("+++++++++++++++++++++++++")
-//     console.log(req.body.id)
-// });
 
-router.get(`/randomRecipes`, async (req, res, next) => {
+/*
+    Send an empty request post via postman
+*/
+router.get("/randomRecipes", async (req, res, next) => {
     try {
         const recipe = await axios.get(`${api_domain}/random`, {
             params: {
@@ -56,78 +55,33 @@ router.get(`/randomRecipes`, async (req, res, next) => {
                 apiKey: process.env.spooncular_apiKey
             }
         });
-        console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
-        console.log(recipe.data);
-        console.log("-------------------------------------------------------------------------------------------------------------------------------------------");
         var recipeArray = recipe.data["recipes"];
-        console.log("coucou");
-        console.log("rec id: " + recipeArray[0].id + "  rec title: "+ recipeArray[0].title);
-        console.log("rec id: " + recipeArray[1].id + "  rec title: "+ recipeArray[1].title);
-        console.log("rec id: " + recipeArray[2].id + "  rec title: "+ recipeArray[2].title);
-        //console.log("rec info:: " + recipeArray[0].params.toString());
-
-        //var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
-        //var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
-
-        var recipeMeta1 = getRecipeInfo(recipeArray[0].id);
-        var recipeMeta2 = getRecipeInfo(recipeArray[1].id);
-        var recipeMeta3 = getRecipeInfo(recipeArray[2].id);
+        var randomRecipe1 = getRecipeData(recipeArray[0]);
+        var randomRecipe2 = getRecipeData(recipeArray[1]);
+        var randomRecipe3 = getRecipeData(recipeArray[2]);
         var random_response =
             {
-                "Random Recipe 1" : recipeMeta1,
-                "Random Recipe 2" : recipeMeta2,
-                "Random Recipe 3" : recipeMeta3,
+                "Random Recipe 1": randomRecipe1,
+                "Random Recipe 2": randomRecipe2,
+                "Random Recipe 3": randomRecipe3,
             };
-        res.status(770).send(random_response);
+        res.status(200).send(random_response);
 
     } catch (error) {
         next(error);
     }
 });
 
-/*router.get('/3RandomRecipes', async (req, res, next) => {
-  const valid_recipes = [];
-  const num_recipes_to_ask=3;
-  const valid_recipes_returned = await getValidRecipe(num_recipes_to_ask, valid_recipes);
-  let info_array = extractRelventRandomRecipesData(valid_recipes_returned);
-  res.status(200).send(info_array);
-})
+function getRecipeData(rawData) {
+    var recipeData =
+        {
+            "Id": rawData["id"],
+            "Name": rawData["title"],
+            "Recipe Picture": rawData["image"]
+        };
+    return recipeData
+}
 
-//#region example1 - make serach endpoint
-router.get("/search", async (req, res, next) => {
-  try {
-    const { query, cuisine, diet, intolerances, number } = req.query;
-    const search_response = await axios.get(`${api_domain}/search`, {
-      params: {
-        query: query,
-        cuisine: cuisine,
-        diet: diet,
-        intolerances: intolerances,
-        number: number,
-        instructionsRequired: true,
-        apiKey: process.env.spooncular_apiKey
-      }
-    });
-    let recipes = await Promise.all(
-      search_response.data.results.map((recipe_raw) =>
-        getRecipeInfo(recipe_raw.id)
-      )
-    );
-    recipes = recipes.map((recipe) => recipe.data);
-    res.send({ data: recipes });
-  } catch (error) {
-    next(error);
-  }
-});*/
-//#endregion
-
-/*function getRecipeInfo(recipes){
-  return {
-    "Id": recipes["recipe_id"],
-    "Picture": recipes["imageURL"],
-    "Name": recipes["recipe_name"]
-  }
-}*/
 
 function getRecipeInfo(id) {
   return axios.get(`${api_domain}/${id}/information`, {

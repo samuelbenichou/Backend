@@ -5,7 +5,18 @@ const bcrypt = require("bcrypt");
 
 const { MyPoolPromise } = require("../../modules/DButils");
 
-/*router.post("/Register", async (req, res, next) => {
+/*
+{
+  "username": "sam",
+  "password": "sam",
+  "firstName": "sam",
+  "lastName": "Benichou",
+  "country": "France",
+  "email": "benichos@post.bgu.ac.il",
+  "profilePicture": "https://res.cloudinary.com"
+}
+ */
+router.post("/Register", async (req, res, next) => {
     try {
         // parameters exists
         // valid parameters
@@ -23,7 +34,7 @@ const { MyPoolPromise } = require("../../modules/DButils");
         const users = await DButils.execQuery("SELECT username FROM users");
 
         if (users.find((x) => x.username === userInfo.username))
-            throw { status: 409, message: "Username taken" };
+            throw {status: 409, message: "Username taken"};
 
         // add the new username
         let hash_password = bcrypt.hashSync(
@@ -33,12 +44,18 @@ const { MyPoolPromise } = require("../../modules/DButils");
         await DButils.execQuery(
             `INSERT INTO users VALUES (default, '${userInfo.username}', '${userInfo.firstName}', '${userInfo.lastName}', '${userInfo.contry}', '${hash_password}', '${userInfo.email}', '${userInfo.profilePic}')`
         );
-        res.status(201).send({ message: "user created", success: true });
+        res.status(201).send({message: "user created", success: true});
     } catch (error) {
         next(error);
     }
-});*/
+});
 
+/* Enter username and password
+   {
+    "username": "samuelb11",
+    "password": "1234"
+    }
+ */
 router.post("/Login", async (req, res, next) => {
     try {
         // check that username exists
@@ -58,7 +75,7 @@ router.post("/Login", async (req, res, next) => {
         }
 
         // Set cookie
-        req.session.user_id = user.user_id;
+        req.session.username = user.username;
         // req.session.save();
         // res.cookie(session_options.cookieName, user.user_id, cookies_options);
 
@@ -69,6 +86,9 @@ router.post("/Login", async (req, res, next) => {
     }
 });
 
+/*
+ Send an empty post via postman
+ */
 router.post("/Logout", function (req, res) {
     req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
     res.send({ success: true, message: "logout succeeded" });
