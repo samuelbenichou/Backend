@@ -59,12 +59,15 @@ router.get("/randomRecipes", async (req, res, next) => {
         var randomRecipe1 = getRecipeData(recipeArray[0]);
         var randomRecipe2 = getRecipeData(recipeArray[1]);
         var randomRecipe3 = getRecipeData(recipeArray[2]);
+        console.log("--------------------------");
+        console.log(randomRecipe1);
+        console.log("--------------------------");
         var random_response =
-            {
-                "Random Recipe 1": randomRecipe1,
-                "Random Recipe 2": randomRecipe2,
-                "Random Recipe 3": randomRecipe3,
-            };
+            [
+                randomRecipe1,
+                randomRecipe2,
+                randomRecipe3,
+            ];
         res.status(200).send(random_response);
 
     } catch (error) {
@@ -77,7 +80,9 @@ function getRecipeData(rawData) {
         {
             "Id": rawData["id"],
             "Name": rawData["title"],
-            "Recipe Picture": rawData["image"]
+            "Image": rawData["image"],
+            "readyInMinutes": rawData["readyInMinutes"],
+            "aggregateLikes": rawData["aggregateLikes"],
         };
     return recipeData
 }

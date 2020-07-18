@@ -6,11 +6,17 @@ var logger = require("morgan");
 const session = require("client-sessions");
 const DButils = require("../modules/DButils");
 
+const cors = require("cors")
 var app = express();
 app.use(logger("dev")); //logger
+const corsConfig = {
+    origin: true,
+    credentials: true
+};
+app.use(cors(corsConfig));
 app.use(express.json()); // parse application/json
 app.use(
-  session({
+    session({
     cookieName: "session", // the cookie key name
     secret: process.env.COOKIE_SECRET, // the encryption key
     duration: 50 * 60 * 1000 * 60, // expired after 20 sec
