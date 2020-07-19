@@ -10,20 +10,20 @@ const axios = require("axios");
 	"username": "samuel"
 }
 */
-router.get("/personalRecipes", async function (req, res) {
+router.get("/personalRecipes/:user_name", async function (req, res) {
     try {
-        const username = req.body.username;
+        const username= req.params.user_name;
         const personal_recipes = await DButils.execQuery(`SELECT recipe_id,recipe_name,imageURL,timePreparation,vegan,vegeterian,freeGluten FROM recipes where author='${username}'`);
         let result = [];
         personal_recipes.forEach(recipe => {
             result.push({
-                recipe_id: recipe.recipe_id,
-                recipe_name: recipe.recipe_name,
-                imageURL: recipe.imageURL,
-                timePreparation: recipe.timePreparation,
+                id: recipe.recipe_id,
+                title: recipe.recipe_name,
+                image: recipe.imageURL,
+                readyInMinutes: recipe.timePreparation,
                 vegan: recipe.vegan,
                 vegetarian: recipe.vegetarian,
-                freeGluten: recipe.freeGluten
+                glutenFree: recipe.freeGluten
             });
         });
         res.send(result);
@@ -45,7 +45,7 @@ router.get("/familyRecipes/:user_name", async (req, res) => {
     familyRecipes.forEach(recipe => {
         result.push({
             id: recipe.recipe_id,
-            name: recipe.recipe_name,
+            title: recipe.recipe_name,
             image: recipe.imageURL,
             familyMember: recipe.familyMember,
             occasion: recipe.occasion,

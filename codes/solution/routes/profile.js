@@ -141,8 +141,8 @@ router.get("/getMyfavourite/:user_name", async function (req, res, next) {
     let favoriteSet=[];
     for (const id of favoriteResSetIDS) {
       let recipe= await spooncular.recipePreviewInfo(id.recipeId);
-      // console.log("----------------------id: "+ recipe.id)
-      // console.log("----------------------title: "+ recipe.title)
+      console.log("----------------------id: "+ recipe.id)
+      console.log("----------------------title: "+ recipe.title)
       favoriteSet.push(recipe);
     }
     // console.log("+++++++++++++----------------------------------------------")
