@@ -59,15 +59,6 @@ router.get("/randomRecipes", async (req, res, next) => {
         var randomRecipe1 = getRecipeData(recipeArray[0]);
         var randomRecipe2 = getRecipeData(recipeArray[1]);
         var randomRecipe3 = getRecipeData(recipeArray[2]);
-        console.log("---------------------------------------");
-        console.log(recipeArray[0].id);
-        console.log(recipeArray[0].readyInMinutes);
-        console.log(recipeArray[0].aggregateLikes);
-        console.log(recipeArray[0].title);
-        console.log(recipeArray[0].vegetarian);
-        console.log(recipeArray[0].vegan);
-        console.log(recipeArray[0].glutenFree);
-        console.log("---------------------------------------");
         var random_response =
             [
                 randomRecipe1,

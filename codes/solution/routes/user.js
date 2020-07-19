@@ -4,6 +4,7 @@ const DButils = require("../../modules/DButils");
 const bcrypt = require("bcrypt");
 const api_domain = "https://api.spoonacular.com/recipes";
 const axios = require("axios");
+const spooncular = require("../../modules/spoonacular_actions");
 
 /*
 {
@@ -60,21 +61,30 @@ router.get("/familyRecipes/:user_name", async (req, res) => {
     First you need to login .
     Send an empty request post via postman
  */
-router.get("/lastWatchedRecipes", async (req, res, next) => {
+router.get("/lastWatchedRecipes/:user_name", async (req, res, next) => {
+
     try {
-        const username = req.session.username;
+        const username= req.params.user_name;
         if (username == undefined) {
             res.status(401).send("User need to be connected");
         } else {
+            console.log("1111111111111111111111111111");
             const lastWatchedRecipes = (
                 await DButils.execQuery(
                     `SELECT TOP 3 idRecipe FROM watched WHERE username = '${username}' ORDER BY lastModify DESC`
                 )
             );
             let result = [];
-            for (let i = 0;i < lastWatchedRecipes.length; i++){
-                result.push(lastWatchedRecipes[i])
+
+            console.log("2222222222222222222222");
+            for (const id of lastWatchedRecipes){
+                //console.log("----------------------id: "+ id.idRecipe)
+                let recipe= await spooncular.recipePreviewInfo(id.idRecipe);
+                console.log("----------------------id: "+ recipe.id)
+                console.log("----------------------title: "+ recipe.title)
+                result.push(recipe);
             }
+            console.log("3333333333333333333333");
             res.status(200).json(result);
         }
     } catch (error) {
@@ -82,6 +92,21 @@ router.get("/lastWatchedRecipes", async (req, res, next) => {
     }
 });
 
+function getRecipeData(rawData) {
+    var recipeData =
+        {
+
+            "id": rawData["id"],
+            "title": rawData["title"],
+            "image": rawData["image"],
+            "readyInMinutes": rawData["readyInMinutes"],
+            "aggregateLikes": rawData["aggregateLikes"],
+            "vegetarian": rawData["vegetarian"],
+            "vegan": rawData["vegan"],
+            "glutenFree": rawData["glutenFree"],
+        };
+    return recipeData
+}
 
 
 module.exports = router;
