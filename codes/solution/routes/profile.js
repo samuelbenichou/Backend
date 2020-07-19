@@ -145,9 +145,9 @@ router.get("/getMyfavourite/:user_name", async function (req, res, next) {
       console.log("----------------------title: "+ recipe.title)
       favoriteSet.push(recipe);
     }
-    // console.log("+++++++++++++----------------------------------------------")
-    // console.log(favoriteSet)
-    // console.log("-+++++++++++---------------------------------------------")
+    console.log("+++++++++++++----------------------------------------------")
+    console.log(favoriteSet)
+    console.log("-+++++++++++---------------------------------------------")
     res.status(200).send(favoriteSet);
   } catch (error) {
     next(error);

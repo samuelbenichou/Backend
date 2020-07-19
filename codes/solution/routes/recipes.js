@@ -37,7 +37,9 @@ router.get("/Information", async (req, res, next) => {
   try {
     //const recipe = await getRecipeInfo(req.query);
     const recipe = await getRecipeInfo(req.query);
-    res.send({ data: recipe.data });
+    res.status(200).send({ data: recipe.data });
+    // res.status(200).send(recipe.data );
+
   } catch (error) {
     next(error);
   }
@@ -49,6 +51,7 @@ router.get("/Information", async (req, res, next) => {
 */
 router.get("/randomRecipes", async (req, res, next) => {
     try {
+        console.log("enter random")
         const recipe = await axios.get(`${api_domain}/random`, {
             params: {
                 number: 3,
@@ -59,6 +62,7 @@ router.get("/randomRecipes", async (req, res, next) => {
         var randomRecipe1 = getRecipeData(recipeArray[0]);
         var randomRecipe2 = getRecipeData(recipeArray[1]);
         var randomRecipe3 = getRecipeData(recipeArray[2]);
+        console.log("all info:"+ randomRecipe3.id);
         var random_response =
             [
                 randomRecipe1,
@@ -73,6 +77,7 @@ router.get("/randomRecipes", async (req, res, next) => {
 });
 
 function getRecipeData(rawData) {
+    //console.log("rawData: "+rawData)
     var recipeData =
         {
 
@@ -161,6 +166,7 @@ router.get("/recipies/recipiesIdsApi", async (req, res, next) => {
             recipesData=  await spooncular.recipePreviewInfo(id )
             recipesArr.push(recipesData);
         }
+        //console.log("all data: "+recipesData[0]);
         if (recipesArr.length > 0) {
             for (const recipe of recipesArr) {
                 let cuerentRecipe = recipe.id;
@@ -253,5 +259,44 @@ function getCurrentTimeDate() {
     //console.log("currentTime: "+currentTime);
     return currentTime;
 }
+
+//get list of recipes idS and return list of recipes frop spooncular API
+// {
+//     "idsArr": [ 716297, 716301, 716423],
+//     "username": "liorB"
+// }
+// router.get("/recipies/information/:recipeId/:username", async (req, res, next) => {
+
+router.get("/recipies/information/:recipeId/:username", async (req, res, next) => {
+    try {
+        const recipeId  = req.params.recipeId;
+        const username  = req.params.username;
+        console.log("recipeId "+recipeId);
+        console.log("username "+ username);
+        let recipesData ;
+        recipesData=  await spooncular.recipePreviewInfo( recipeId )
+        console.log("recipesData:::: "+ recipesData.instructions);
+        console.log("recipesData:::: "+ recipesData.servings);
+        console.log("recipesData:::: "+ recipesData.extendedIngredients[0].aisle
+            +"  "+recipesData.extendedIngredients[0].amount);
+        if (recipesData.length > 0){
+            let cuerentRecipe = recipeId;
+            const lastWatchedRecipes = (
+                await DButils.execQuery(
+                    `SELECT * FROM watched WHERE idRecipe='${cuerentRecipe}' and username='${username}'`
+                )
+            );
+            let currentTime = getCurrentTimeDate();
+            if( lastWatchedRecipes.length!=1 ){
+                query=`insert into watched (username,idRecipe,lastModify) VALUES('${username}','${cuerentRecipe}' ,'${currentTime}' )`;
+                await DButils.execQuery(query);
+            }
+        }
+        res.status(200).send(recipesData);
+    }
+    catch (error) {
+        next(error);
+    }
+});
 
 module.exports = router;

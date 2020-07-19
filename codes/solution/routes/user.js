@@ -68,7 +68,7 @@ router.get("/lastWatchedRecipes/:user_name", async (req, res, next) => {
         if (username == undefined) {
             res.status(401).send("User need to be connected");
         } else {
-            console.log("1111111111111111111111111111");
+            //console.log("1111111111111111111111111111");
             const lastWatchedRecipes = (
                 await DButils.execQuery(
                     `SELECT TOP 3 idRecipe FROM watched WHERE username = '${username}' ORDER BY lastModify DESC`
@@ -76,15 +76,16 @@ router.get("/lastWatchedRecipes/:user_name", async (req, res, next) => {
             );
             let result = [];
 
-            console.log("2222222222222222222222");
+            //console.log("2222222222222222222222");
             for (const id of lastWatchedRecipes){
                 //console.log("----------------------id: "+ id.idRecipe)
                 let recipe= await spooncular.recipePreviewInfo(id.idRecipe);
-                console.log("----------------------id: "+ recipe.id)
-                console.log("----------------------title: "+ recipe.title)
+                //console.log("----------------------id: "+ recipe.id)
+                //console.log("----------------------title: "+ recipe.title)
+                console.log("----------------------all info: "+ recipe)
                 result.push(recipe);
             }
-            console.log("3333333333333333333333");
+            //console.log("3333333333333333333333");
             res.status(200).json(result);
         }
     } catch (error) {

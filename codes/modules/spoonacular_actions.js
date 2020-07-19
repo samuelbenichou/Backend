@@ -9,7 +9,9 @@ async function recipePreviewInfo(recipeId) {
             apiKey: process.env.spooncular_apiKey
         }
     });
-    const{id,title,readyInMinutes,aggregateLikes,vegetarian,vegan,glutenFree,image} = recipeinfo.data;
+    //console.log("recipeinfo.data==== "+recipeinfo.data.instructions);
+    const{id,title,readyInMinutes,aggregateLikes,vegetarian,vegan,glutenFree
+        ,image,instructions,servings,extendedIngredients,analyzedInstructions} = recipeinfo.data;
     //console.log("-----------------------2.2  id: "+recipeinfo.data.title)
     return {
         id:id,
@@ -20,6 +22,10 @@ async function recipePreviewInfo(recipeId) {
         vegan:vegan,
         glutenFree:glutenFree,
         image:image,
+        instructions:instructions,
+        servings:servings,
+        extendedIngredients:extendedIngredients,
+        analyzedInstructions:analyzedInstructions,
     };
 
 }
