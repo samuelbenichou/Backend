@@ -76,9 +76,9 @@ router.get("/randomRecipes", async (req, res, next) => {
 function getRecipeData(rawData) {
     var recipeData =
         {
-            "Id": rawData["id"],
-            "Name": rawData["title"],
-            "Image": rawData["image"],
+            "id": rawData["id"],
+            "name": rawData["title"],
+            "image": rawData["image"],
             "readyInMinutes": rawData["readyInMinutes"],
             "aggregateLikes": rawData["aggregateLikes"],
         };
