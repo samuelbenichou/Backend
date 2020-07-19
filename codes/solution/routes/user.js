@@ -38,15 +38,15 @@ router.get("/personalRecipes", async function (req, res) {
 	"username": "liorB"
 }
 */
-router.get("/familyRecipes", async (req, res) => {
-    const username = req.body.username;
+router.get("/familyRecipes/:user_name", async (req, res) => {
+    const username= req.params.user_name;
     let familyRecipes = await DButils.execQuery(`SELECT recipe_id,recipe_name,imageURL,familyMember,occasion,preparation from familyRecipes where username='${username}'`);
     let result = [];
     familyRecipes.forEach(recipe => {
         result.push({
-            recipe_id: recipe.recipe_id,
-            recipe_name: recipe.recipe_name,
-            imageURL: recipe.imageURL,
+            id: recipe.recipe_id,
+            name: recipe.recipe_name,
+            image: recipe.imageURL,
             familyMember: recipe.familyMember,
             occasion: recipe.occasion,
             preparation: recipe.preparation,

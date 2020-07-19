@@ -136,25 +136,19 @@ router.put('/addToMyFavorite',async function(req,res,next){
 router.get("/getMyfavourite/:user_name", async function (req, res, next) {
   try
   {
-    const usernameBody= req.body.username;
-    console.log("usernameBody: "+usernameBody)
     const username= req.params.user_name;
-    console.log("user_name: "+username)
     const favoriteResSetIDS = await DButils.execQuery(`SELECT recipeId FROM profiles where username='${username}' and isFavorite=1`);
-    console.log("===================----------------------------------------------")
-    console.log(favoriteResSetIDS)
-    console.log("=================----------------------------------------")
     let favoriteSet=[];
     for (const id of favoriteResSetIDS) {
       let recipe= await spooncular.recipePreviewInfo(id.recipeId);
-      console.log("----------------------id: "+ recipe.id)
-      console.log("----------------------title: "+ recipe.title)
+      // console.log("----------------------id: "+ recipe.id)
+      // console.log("----------------------title: "+ recipe.title)
       favoriteSet.push(recipe);
     }
-    console.log("+++++++++++++----------------------------------------------")
-    console.log(favoriteSet)
-    console.log("-+++++++++++---------------------------------------------")
-    res.send(favoriteSet);
+    // console.log("+++++++++++++----------------------------------------------")
+    // console.log(favoriteSet)
+    // console.log("-+++++++++++---------------------------------------------")
+    res.status(200).send(favoriteSet);
   } catch (error) {
     next(error);
   }
