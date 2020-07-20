@@ -14,7 +14,8 @@ const spooncular = require("../../modules/spoonacular_actions");
 router.get("/personalRecipes/:user_name", async function (req, res) {
     try {
         const username= req.params.user_name;
-        const personal_recipes = await DButils.execQuery(`SELECT recipe_id,recipe_name,imageURL,timePreparation,vegan,vegeterian,freeGluten FROM recipes where author='${username}'`);
+        // const personal_recipes = await DButils.execQuery(`SELECT recipe_id,recipe_name,imageURL,timePreparation,vegan,vegeterian,freeGluten FROM recipes where author='${username}'`);
+        const personal_recipes = await DButils.execQuery(`SELECT recipe_id,recipe_name,imageURL,timePreparation,vegan,vegeterian,freeGluten FROM myRecipes where author='${username}'`);
         let result = [];
         personal_recipes.forEach(recipe => {
             result.push({
@@ -41,7 +42,8 @@ router.get("/personalRecipes/:user_name", async function (req, res) {
 */
 router.get("/familyRecipes/:user_name", async (req, res) => {
     const username= req.params.user_name;
-    let familyRecipes = await DButils.execQuery(`SELECT recipe_id,recipe_name,imageURL,familyMember,occasion,preparation from familyRecipes where username='${username}'`);
+    // let familyRecipes = await DButils.execQuery(`SELECT recipe_id,recipe_name,imageURL,familyMember,occasion,preparation from familyRecipes where username='${username}'`);
+    let familyRecipes = await DButils.execQuery(`SELECT recipe_id,recipe_name,imageURL,familyMember,occasion,preparation from myFamilyRecipes where username='${username}'`);
     let result = [];
     familyRecipes.forEach(recipe => {
         result.push({
