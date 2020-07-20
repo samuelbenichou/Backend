@@ -103,53 +103,6 @@ function getRecipeInfo(id) {
   });
 }
 
-
-//search recipes in spooncular AIP by name and categories
-// {
-//     "recipesNameSearch": "Cabbage and sausages in beer",
-//     "numberOfRecipes": "0",
-//     "cuisine": "",
-//     "diet": "",
-//     "intolerance": ""
-// }
-router.get("/searchRecipes", async (req, res, next) => {
-    try {
-        const cuisine = req.body.cuisine ;
-        const diet = req.body.diet ;
-        const intolerance = req.body.intolerance ;
-        const recipesNameSearch = req.body.recipesNameSearch ;
-        let numberOfRecipes = req.body.numberOfRecipes ;
-        // console.log("cuisine: "+ cuisine);
-        // console.log("diet: "+ diet);
-        // console.log("intolerance: "+ intolerance);
-        // console.log("recipesNameSearch: "+ recipesNameSearch);
-        // console.log("numberOfRecipes: "+ numberOfRecipes);
-        //res.status(204).send({message:"No recipes found for the inserted query"});
-        if(numberOfRecipes<=0){
-            numberOfRecipes =5;
-        }
-        const searchResults =await spooncular.searchRecipes(recipesNameSearch,cuisine,diet,intolerance,numberOfRecipes);
-        //console.log("---------------------------------------1");
-        let recipesData = await Promise.all(
-            searchResults.data.results.map((recipe_raw) =>
-                spooncular.recipePreviewInfo(recipe_raw.id)
-            )
-        );
-        //console.log("---------------------------------------2");
-        if(recipesData.length>0)
-            res.status(200).send(recipesData);
-        else
-        {
-            res.status(204).send({message:"No recipes found for the inserted query"});
-        }
-    } catch (error) {
-        next(error);
-    }
-});
-
-
-
-
 //get list of recipes idS and return list of recipes frop spooncular API
 // {
 //     "idsArr": [ 716297, 716301, 716423],
@@ -295,6 +248,52 @@ router.get("/recipies/information/:recipeId/:username", async (req, res, next) =
         res.status(200).send(recipesData);
     }
     catch (error) {
+        next(error);
+    }
+});
+
+//search recipes in spooncular AIP by name and categories
+// {
+//     "recipesNameSearch": "Cabbage and sausages in beer",
+//     "numberOfRecipes": "0",
+//     "cuisine": "",
+//     "diet": "",
+//     "intolerance": ""
+// }
+router.get("/searchRecipes/:cuisine/:diet/:intolerance/:query/:number", async (req, res, next) => {
+    try {
+        const cuisine = req.params.cuisine ;
+        const diet = req.params.diet ;
+        const intolerance = req.params.intolerance ;
+        const recipesNameSearch = req.params.query ;
+        let numberOfRecipes = req.params.number ;
+        console.log("-------------------------------");
+        console.log("cuisine: "+ cuisine);
+        console.log("diet: "+ diet);
+        console.log("intolerance: "+ intolerance);
+        console.log("recipesNameSearch: "+ recipesNameSearch);
+        console.log("numberOfRecipes: "+ numberOfRecipes);
+        //res.status(204).send({message:"No recipes found for the inserted query"});
+        if(numberOfRecipes<=0){
+            numberOfRecipes =5;
+        }
+        const searchResults =await spooncular.searchRecipes(recipesNameSearch,cuisine,diet,intolerance,numberOfRecipes);
+        console.log("---------------------------------------1");
+        let recipesData = await Promise.all(
+            searchResults.data.results.map((recipe_raw) =>
+                spooncular.recipePreviewInfo(recipe_raw.id)
+            )
+        );
+        console.log("---------------------------------------2");
+        console.log("all data: "+recipesData.data);
+        console.log("---------------------------------------3");
+        if(recipesData.length>0)
+            res.status(200).send(recipesData);
+        else
+        {
+            res.status(204).send({message:"No recipes found for the inserted query"});
+        }
+    } catch (error) {
         next(error);
     }
 });

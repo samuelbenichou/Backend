@@ -111,5 +111,34 @@ function getRecipeData(rawData) {
     return recipeData
 }
 
+router.get("/isWatched/:user_name/:id", async (req, res, next) => {
+
+    try {
+        const username= req.params.user_name;
+        const id= req.params.id;
+        if (username == undefined || id ==undefined) {
+            res.status(401).send("User need to be connected or recipe not send");
+        } else {
+            const watchedResponse = (
+                await DButils.execQuery(
+                    `SELECT idRecipe FROM watched WHERE username = '${username}' and idRecipe ='${id}' `
+                )
+
+            );
+            let result = [];
+            result.push(watchedResponse);
+            res.status(200).json(result);
+            // if(result.length==1){
+            //     res.status(200).json(result);
+            // }
+            // else{
+            //     res.status(200).json(result);
+            // }
+
+        }
+    } catch (error) {
+        next(error);
+    }
+});
 
 module.exports = router;
